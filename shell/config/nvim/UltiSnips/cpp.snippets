@@ -1,0 +1,351 @@
+snippet main "main func of c"
+#include <iostream>
+using namespace std;
+
+int main(int argc, const char* argv[])
+{
+	${1:code}
+	return 0;
+}
+endsnippet
+
+snippet func "function of c"
+<++>(<++>)
+{
+	<++>
+	return ;
+}
+endsnippet
+
+snippet if "if of c"
+if (${1:expr}) {
+	<++>;
+}<++>
+endsnippet
+
+snippet ifelse "if else of c"
+if (${1:expr}) {
+	<++>;
+} else {
+	<++>;
+}<++>
+endsnippet
+
+snippet elseif "else if of c"
+else if (${1:expr}) {
+	<++>;
+}<++>
+endsnippet
+
+snippet else "else of c"
+else {
+	${1:code};
+}<++>
+endsnippet
+
+snippet while "while of c"
+while (${1:expr}) {
+	<++>;
+}<++>
+endsnippet
+
+snippet do "do while of c"
+do {
+	<++>;
+} while (${1:expr});
+endsnippet
+
+snippet switch "switch of c"
+switch (${1:expr}) {
+case <++>:
+	break;
+
+case <++>:
+	break;
+
+case <++>:
+	break;
+
+default:
+	break;
+}<++>
+endsnippet
+
+snippet case "case of c"
+case ${1:expr}:
+	break;
+endsnippet
+
+snippet for "for of c"
+for (size_t ${1:i} = 0; $1 < <++>; ++$1) {
+	<++>;
+}
+endsnippet
+
+snippet fori "for iterator of cpp"
+for (auto iter = ${1:val}.begin(); iter != $1.end(); ++iter) {
+	<++>;
+}
+endsnippet
+
+snippet forc "for const_iterator of cpp"
+for (auto citer = ${1:val}.cbegin(); citer != $1.cend(); ++citer) {
+	std::cout << <++>  << std::endl;
+}
+endsnippet
+
+snippet ff "for each of cpp"
+for (auto ${1:val} : <++>){
+	std::cout << <++>  << std::endl;
+}
+endsnippet
+
+snippet ./ "fengexian" b
+//.*-+-*-+-*-+-*-+-*我是华丽的分隔线*-+-*-+-*-+-*-+-*.//
+endsnippet
+
+snippet _cpp "Description" b
+
+#ifdef __cplusplus
+extern "C"{
+#endif
+${1}
+#ifdef __cplusplus
+}
+#endif
+
+endsnippet
+
+snippet brief "brief of c"
+//-----------------------------------------------------------------------------
+//  ${1:brief}
+//-----------------------------------------------------------------------------
+endsnippet
+
+snippet note "note of c"
+/***
+ *  ${1:note}
+ */
+endsnippet
+
+snippet /b "brief of note"
+/// @brief 
+endsnippet
+
+snippet /r "return of note"
+/// @return 
+endsnippet
+
+snippet /p "param of note"
+/// @param
+endsnippet
+
+snippet struct "struct of c"
+typedef struct _${1:STRUCT_NAME} {
+	<++>;
+}$1;
+endsnippet
+
+snippet union "union of c"
+typedef union _${1:UNION_NAME} {
+	<++>;
+}$1;
+endsnippet
+
+snippet enum "enum of c"
+typedef enum _${1:ENUM_NAME} {
+	<++>,
+}$1;
+endsnippet
+
+snippet sc "scanf of c"
+scanf("${1:format}", &<++>);<++>
+endsnippet
+
+snippet pr "printf of c"
+printf("${1:format}\n"<++>);<++>
+endsnippet
+
+snippet free "free of c"
+free(${1:pointer});
+$1 = NULL;
+endsnippet
+
+snippet class "class of cpp"
+class ${1:name} {
+public:
+	//@constructor
+	$1() {
+	}
+	//@destructor
+	~$1() {
+	}
+
+private:
+};
+endsnippet
+
+snippet cout "cout of cpp"
+std::cout << ${1:output} << std::endl;
+endsnippet
+
+snippet print "print of cpp" b
+void print(void) const {
+	std::cout << ${1:output} << std::endl;
+}
+endsnippet
+
+snippet set "set of cpp" b
+inline void set(int ${1:val}) {
+	this->m_$1 = $1;
+}
+endsnippet
+
+snippet get "get of cpp" b
+inline int get(void) const {
+	return ${1:retval}
+}
+endsnippet
+
+snippet filehead "file head of c"
+/* slogan: We don't produce code, we're just GitHub porters!
+ * ============================================================================
+ *
+ *       Filename:  `!v expand("%:t")`
+ *
+ *    Description:  ${1:我们不生产代码，我们只是GitHub的搬运工}
+ *
+ *        Version:  1.0
+ *        Created:  `!v strftime("%Y-%m-%d %H:%M:%S")`
+ *        Changed:  `!v strftime("%Y-%m-%d %H:%M:%S")`
+ *       Compiler:  GCC
+ *
+ *         Author:  shing aqdebug.com
+ *          Email:  aqdebug@gmail.com
+ *   Organization:
+ *
+ *        License:  The GPL License
+ *      CopyRight:  See Copyright Notice in LICENSE.
+ *
+ * ============================================================================
+ */
+endsnippet
+
+snippet shen0 "Description" b
+/***
+ *         ┌─┐       ┌─┐
+ *      ┌──┘ ┴───────┘ ┴──┐
+ *      │                 │
+ *      │       ───       │
+ *      │  ─┬┘       └┬─  │
+ *      │                 │
+ *      │       ─┴─       │
+ *      │                 │
+ *      └───┐         ┌───┘
+ *          │         │
+ *          │         │
+ *          │         │
+ *          │         └──────────────┐
+ *          │                        │
+ *          │                        ├─┐
+ *          │                        ┌─┘
+ *          │                        │
+ *          └─┐  ┐  ┌───────┬──┐  ┌──┘
+ *            │ ─┤ ─┤       │ ─┤ ─┤
+ *            └──┴──┘       └──┴──┘
+ *                神兽保佑
+ *                代码无BUG!
+ */
+endsnippet
+
+snippet shen1 "Description" b
+/***
+ *      ┌─┐       ┌─┐
+ *   ┌──┘ ┴───────┘ ┴──┐
+ *   │                 │
+ *   │       ───       │
+ *   │   >        <    │
+ *   │                 │
+ *   │   ...  ⌒  ...   │
+ *   │                 │
+ *   └───┐         ┌───┘
+ *       │         │
+ *       │         │
+ *       │         │
+ *       │         └──────────────┐
+ *       │                        │
+ *       │                        ├─┐
+ *       │                        ┌─┘
+ *       │                        │
+ *       └─┐  ┐  ┌───────┬──┐  ┌──┘
+ *         │ ─┤ ─┤       │ ─┤ ─┤
+ *         └──┴──┘       └──┴──┘
+ *                神兽保佑
+ *               代码无BUG!
+ */
+endsnippet
+
+snippet shen2 "Description" b
+/***
+ *      ┌─┐       ┌─┐ + +
+ *   ┌──┘ ┴───────┘ ┴──┐++
+ *   │                 │
+ *   │       ───       │++ + + +
+ *   ███████───███████ │+
+ *   │                 │+
+ *   │       ─┴─       │
+ *   │                 │
+ *   └───┐         ┌───┘
+ *       │         │
+ *       │         │   + +
+ *       │         │
+ *       │         └──────────────┐
+ *       │                        │
+ *       │                        ├─┐
+ *       │                        ┌─┘
+ *       │                        │
+ *       └─┐  ┐  ┌───────┬──┐  ┌──┘  + + + +
+ *         │ ─┤ ─┤       │ ─┤ ─┤
+ *         └──┴──┘       └──┴──┘  + + + +
+ *                神兽保佑
+ *               代码无BUG!
+ */
+endsnippet
+
+snippet shen3 "Description" b
+//                       神兽保佑
+//                 ___====-_  _-====___
+//           _--^^^#####//      \\#####^^^--_
+//        _-^##########// (    ) \\##########^-_
+//       -############//  |\^^/|  \\############-
+//     _/############//   (@::@)   \\############\_
+//    /#############((     \\//     ))#############\
+//   -###############\\    (oo)    //###############-
+//  -#################\\  / VV \  //#################-
+// -###################\\/      \//###################-
+//_#/|##########/\######(   /\   )######/\##########|\#_
+//|/ |#/\#/\#/\/  \#/\##\  |  |  /##/\#/  \/\#/\#/\#| \|
+//`  |/  V  V  `   V  \#\| |  | |/#/  V   '  V  V  \|  '
+//   `   `  `      `   / | |  | | \   '      '  '   '
+//                    (  | |  | |  )
+//                   __\ | |  | | /__
+//                  (vvv(VVV)(VVV)vvv)
+//                       永无BUG!
+endsnippet
+
+snippet singledog "Description" b
+/***
+ * ░░░░░░░░░░░░░░░░░░░░░░░░▄░░
+ * ░░░░░░░░░▐█░░░░░░░░░░░▄▀▒▌░
+ * ░░░░░░░░▐▀▒█░░░░░░░░▄▀▒▒▒▐░
+ * ░░░░░░░▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐░
+ * ░░░░░▄▄▀▒░▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐░
+ * ░░░▄▀▒▒▒░░░▒▒▒░░░▒▒▒▀██▀▒▌░
+ * ░░▐▒▒▒▄▄▒▒▒▒░░░▒▒▒▒▒▒▒▀▄▒▒░
+ * ░░▌░░▌█▀▒▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐
+ * ░▐░░░▒▒▒▒▒▒▒▒▌██▀▒▒░░░▒▒▒▀▄
+ * ░▌░▒▄██▄▒▒▒▒▒▒▒▒▒░░░░░░▒▒▒▒
+ * ▀▒▀▐▄█▄█▌▄░▀▒▒░░░░░░░░░░▒▒▒
+ * 单身狗就这样默默地看着你，一句话也不说。
+ */
+endsnippet

@@ -1,0 +1,158 @@
+""**************************backups""**************************
+""**************以下内容都是没有用的备份或注释*****************
+""windows下换行符为\r\n,linux下为\n,如果把win下的文件复制到linux
+""就可能会产生换行错误,即
+""可以用:%s/^M$//g这条命令来消除\r产生的错误
+""上面那个方法有时候不管用，我也不知道为什么
+""但是可以用:set fileformat=unix这条命令来把win下编辑的东西转成unix
+""-------------------------------------------------------------
+""调整Ctrl-e/y滚动
+"""快速滚动Speed up scrolling of the viewport slightly
+""nnoremap <C-e> 50<C-e>
+""nnoremap <C-y> 50<C-y>
+""-------------------------------------------------------------
+""vim命令:
+""zz:把当前行放到屏幕中间
+""shirt+a:在当前行末尾插入字符
+""shirt+i:在当前行首部插入字符
+""insert模式下的Ctrl+c:退回普通模式,相当于ESC
+""o:在当前行向下插入新行并进入insert;shirt+o:向上插入新行并进入insert
+""n:寻找下一个查找的字符;N:寻找上一个查找的字符
+""cw(词首):删除当前单词并进入insert;ciw(单词中):删除当前单词并进入insert
+""fx:从当前位置寻找x字符,找到后并跳转到x字符
+""u:撤销;Ctrl+r:反撤销
+""ctrl+o:回到上一次修改的位置;ctrl+i:回到你刚才来的位置
+""gf:打开并进入光标所在的文件
+""color:改变vim的背景颜色;eg::color morning
+""normal模式下z=:(在打开拼写检查的前提下)给出拼写检查的选项
+""[s:光标定位到上一个拼写检查认为错误的位置;]s:定位到下一个拼写错误位置
+""insert模式下Ctrl+x+s:给出拼写检查可替换单词的选项
+"":%TOhtml这条命令就是把当前文件以html的方式输出,方便打印和预览
+""-------------------------------------------------------------
+""在插入模式下利用表达式寄存器作计算:(不过c-r被我改了,所以用不了)
+""在插入模式下，按 ctrl+r ,然后再按 = 就可以利用表达式寄存器进行计算，
+""在这时就可以输入加减乘除，最后的结果输入到文本当中；
+
+
+""git使用方法:
+""git init:把当前文件夹初始化为git仓库
+""git status:查看当前项目相关信息
+""git add <file>...:把文件添加到git仓库
+""git diff:比较文件做了哪些修改
+""git reset:撤回更改
+""git config --global user.name "aqshing":告诉git你是谁
+""git config --global user.email "asm.best@email":告诉git你的email
+""git commit( -m "xxx"):新添加文件的描述
+""git config --global core.editor vim:设置配置文件编辑器为vim
+""vim .gitignore:把不想让git追踪的文件写到这里
+""git rm --cached <file>...:让git停止追踪这个文件
+""git branch( -d/-D):添加一个新的分支;d/(D):(强制)删除分支
+""git checkout:切换git分支
+""git merge:合并分支
+""git remote rm origin:删除远程git仓库源
+""git remote add origin https:告诉git你的项目在网上的地址在哪
+""git push --set-upstream origin master:提交项目
+""git config credential.helper store:让git记住你的github的密码
+""git clone https:克隆项目到本地的仓库
+""git  pull:把别人做的修改下拉到本地
+
+
+
+
+""vim-signature(BookMarks)使用方法
+""mx        标记当前行
+""dmx       删除标记x
+""m<Space>  删除所有标记
+""m/        列出所有标记
+""]`        跳转到下一个标记
+""['        跳转到上一个标记
+
+
+""Doxygen插件使用说明
+""使用时，将光标定位到文件首行，输入:DoxAuthor将插入文件头注释骨架
+""（第一次会让你输入文件版本号）
+""并把光标停留在@brief 后面，等待输入文件描述。
+""在光标定位到数据结构声明或函数声明的第一行，运行:Dox，
+""将生成数据结构或函数的注释骨架
+""并把光标定位在@brief 后，期待你输入具体的注释内容。
+
+
+""没用的
+"""按<F4>键使用Firefox预览Markdown文件
+""nmap <F6> :call Preview()<CR>
+""func! Preview()
+""    if &filetype == 'markdown' || $filetype == 'md'
+""        exec "!chrome %"
+""    endif
+""endfunc
+""" Compile function
+""noremap r :call CompileRunGcc()<CR>
+""func! CompileRunGcc()
+""	exec "w"
+""	if &filetype == 'markdown'
+""		exec "MarkdownPreview"
+""	endif
+""endfunc
+""
+""let g:mkdp_auto_start = 1
+""let g:mkdp_auto_close = 1
+""let g:mkdp_refresh_slow = 0
+""let g:mkdp_command_for_global = 0
+""let g:mkdp_open_to_the_world = 0
+""let g:mkdp_open_ip = ''
+"""let g:mkdp_path_to_chrome = /usr/bin/chromium-browser"
+""let g:mkdp_browser = 'chromium'
+""let g:mkdp_echo_preview_url = 0
+""let g:mkdp_browserfunc = 'MKDP_browserfunc_default'
+""let g:mkdp_preview_options = {
+""    \ 'mkit': {},
+""    \ 'katex': {},
+""    \ 'uml': {},
+""    \ 'maid': {},
+""    \ 'disable_sync_scroll': 0,
+""    \ 'sync_scroll_type': 'middle',
+""    \ 'hide_yaml_meta': 1,
+""    \ 'sequence_diagrams': {},
+""    \ 'flowchart_diagrams': {},
+""    \ 'content_editable': v:false
+""    \ }
+""let g:mkdp_markdown_css = ''
+""let g:mkdp_highlight_css = ''
+""let g:mkdp_port = ''
+""let g:mkdp_page_title = '「${name}」'
+
+
+" ===
+" === eleline.vim
+" ===
+"let g:eleline_powerline_fonts = 0
+
+" coc wiki web link:
+" https://github.com/neoclide/coc.nvim/wiki
+" coc 插件帮助文档在线网址:
+" https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions
+" 'coc-json',			"json插件
+" 'coc-diagnostic',		"语法诊断插件
+" 'coc-explorer',		"文件管理器
+" 'coc-clangd',			"c++插件
+" 'coc-gitignore',		"git插件
+" 'coc-lists',			"unknown
+" 'coc-prettier',		"js格式化插件
+" 'coc-snippets',		"代码片段插件
+" 'coc-syntax',			"语法高亮插件
+" 'coc-translator',		"单词翻译插件
+" 'coc-vimlsp'			"vim插件
+""let g:coc_global_extensions = [
+""	\ 'coc-json',
+""	\ 'coc-diagnostic',
+""	\ 'coc-explorer',
+""	\ 'coc-clangd',
+""	\ 'coc-gitignore',
+""	\ 'coc-lists',
+""	\ 'coc-prettier',
+""	\ 'coc-snippets',
+""	\ 'coc-yank',
+""	\ 'coc-tabnine',
+""	\ 'coc-syntax',
+""	\ 'coc-translator',
+""	\ 'coc-vimlsp']

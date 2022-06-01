@@ -1,0 +1,19 @@
+source $HOME/.vim/plugins.vim
+source $HOME/.vim/base.vim
+source $HOME/.vim/keymap.vim
+source $HOME/.vim/plugconf.vim
+source $HOME/.vim/optional.vim
+
+augroup InitVI
+autocmd!
+autocmd FileType markdown source $HOME/.vim/md-snippets.vim
+autocmd FileType c,cpp,java,sh source $HOME/.vim/code.vim
+""autocmd FileType c,cpp source $HOME/.vim/test.vim
+""自动格式化c/c++ code
+autocmd FileType c,cpp ClangFormatAutoEnable
+""新建.c,.h,.sh,.java文件，自动插入文件头
+autocmd BufNewFile *.[ch],*.sh,*.java,*.cpp,*.hpp,*.cc  exec ":call SetTitle()"
+autocmd FileType cpp set dictionary=$HOME/.vim/.dict/dictcv.dict
+""get correct comment highlighting about json
+autocmd FileType json syntax match Comment +\/\/.\+$+
+augroup END

@@ -64,7 +64,8 @@ func! SetTitle()
 		normal ggf.r_jr_j
 		return
 	elseif fileType == 'c' || fileType == 'cpp' ||
-\		fileType == 'sh' || fileType == 'shell'
+\		fileType == 'sh' || fileType == 'shell' ||
+\		fileType == 'cc'
 		normal ggifilehead,e
 	endif
 endfunc

@@ -18,7 +18,7 @@
 	"suggest.floatEnable": true,
 	"suggest.detailField": "preview",
 	"suggest.snippetIndicator": "",
-	"suggest.triggerCompletionWait": 100,
+	"suggest.triggerCompletionWait": 50,
 	"suggest.echodocSupport": true,
 
 	"suggest.completionItemKindLabels": {
@@ -51,9 +51,9 @@
 
 //	"diagnostic.signOffset": 1,
 	"diagnostic.errorSign": "e",
-	"diagnostic.warningSign": "\uf071",
-	"diagnostic.infoSign": "\uf129",
-	"diagnostic.hintSign": "\uf864",
+	"diagnostic.warningSign": "w",
+	"diagnostic.infoSign": "i",
+	"diagnostic.hintSign": "h",
 	"diagnostic.displayByAle": false,
 	"diagnostic.refreshOnInsertMode": false,
 //	"diagnostic.refreshAfterSave": false,
@@ -135,12 +135,17 @@
 			"command": "bash-language-server",
 			"args": ["start"],
 			"filetypes": ["sh"],
-			"ignoredRootPaths": []
+			"ignoredRootPaths": ["~"]
 		},
 		"dockerfile": {
 			"command": "docker-langserver",
 			"filetypes": ["dockerfile"],
 			"args": ["--stdio"]
+		},
+		"nginx-language-server": {
+			"command": "nginx-language-server",
+			"filetypes": ["nginx"],
+			"rootPatterns": ["nginx.conf", ".git"]
 		},
 		"lua": {
 			"command": "lua-lsp",

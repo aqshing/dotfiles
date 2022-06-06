@@ -1,7 +1,7 @@
 """"""""寓繁于简""""""""""""""""""""""""""""""以简驭繁"""""""""
 """""""""""""""""""""""""插件安装管理区""""""""""""""""""""""""
 """""""""""""""""""""""""""""start""""""""""""""""""""""""""""
-call plug#begin('~/.local/share/nvim/plugged')
+call plug#begin('$HOME/.local/share/nvim/plugged')
 ""*********************所有插件请统统写在下面******************
 ""vim配色方案相关插件
 ""Explorer:配色方案管理插件```
@@ -47,12 +47,18 @@ Plug 'rhysd/vim-clang-format'
 ""Commentary:代码批量注释插件```deprecated
 ""Plug 'tpope/vim-commentary', { 'for': ['c', 'cpp', 'vim-plug'] }
 
+""Gutentags:ctags代码阅读函数跳转插件
+Plug 'ludovicchabant/vim-gutentags'
+
 ""COC:c代码补全插件
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 ""Plug 'prabirshrestha/vim-lsp'
 
 ""Spector:代码调试插件
 ""Plug 'puremourning/vimspector', {'do': './install_gadget.py --enable-c --enable-bash'}
+
+""Emmet:html补全插件
+Plug 'mattn/emmet-vim', { 'for': ['html', 'css', 'vim-plug'] }
 
 ""Highlight:STL高亮插件
 Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp', 'vim-plug'] }
@@ -74,7 +80,7 @@ Plug 'lfv89/vim-interestingwords', { 'for': ['c', 'cpp', 'vim-plug'] }
 ""Plug 'ianva/vim-youdao-translater'
 
 ""FZF:文件路径模糊搜索```deprecated
-""Plug 'junegunn/fzf', { 'dir': '~/.config/nvim/.fzf', 'do': './install --all' }
+""Plug 'junegunn/fzf', { 'dir': '$HOME/.config/nvim/.fzf', 'do': './install --all' }
 ""-------------------------------------------------------------------------
 "Plug 'iamcco/mathjax-support-for-mkdp'
 

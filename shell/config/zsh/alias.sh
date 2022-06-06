@@ -15,7 +15,7 @@ alias j='_zlua'
 alias scp='scp -r'
 alias gdb='gdb -q'
 # grep
-alias pg='ps -aux | grep'
+alias pg='ps -aux | grep -v grep | grep'
 alias tg='top | grep'
 alias hg='history | grep'
 #alias ig='ifconfig | grep inet'
@@ -41,6 +41,18 @@ alias ds='docker search --limit=5'
 alias di='docker images'
 alias drm='docker rm'
 alias drmi='docker rmi'
+# vpn
+alias myip='curl cip.cc'
+alias vip='proxychains4 curl cip.cc'
+# 测试vpn是否连接成功
+alias vpnt='curl -x socks5://127.0.0.1:10808 https://www.google.com -v'
+alias v='proxychains4'
+# Global Terminal VPN
+function gvpn()
+{#全局终端代理
+	export ALL_PROXY="socks5://127.0.0.1:10808"
+	export http_proxy="http://127.0.0.1:10809"
+}
 
 #alias d='dirs -v | head -10'
 #alias 1='cd -'

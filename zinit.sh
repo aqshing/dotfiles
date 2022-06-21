@@ -1,15 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###################################################
 # Filename: zinit.sh
 # Author: aqshing
 # Email: aqdebug.com aqdebug@gmail.com
 # Brief: init shell
 # Created: 2020-11-05 20:53:24
-# Changed: 2022-06-06 18:10:58
+# Changed: 2022-06-21 16:14:29
 ###################################################
 
 ##set -xeuo pipefail
-#set -x
 # 架构 x86 x86_64 arm aarch64
 HOST_ARCH=$(uname -m | sed -e 's/i.86/i686/' -e 's/^armv.*/arm/')
 # 内核：Linux
@@ -26,6 +25,7 @@ START_DIR=$(dirname "$0")
 START_DIR=$(cd "$START_DIR" || exit; pwd)
 
 ConfFile='~/.bashrc'
+SourceLine=0
 
 
 function Transhor()
@@ -45,25 +45,26 @@ function Transhor()
 
 function CpConf()
 {
-	if [ ! -d $HOME/.config ]; then
-		mkdir $HOME/.config
+	if [ ! -d "$HOME/.config" ]; then
+		mkdir "$HOME/.config"
 	fi
 
 	for folder in $(ls shell/config)
 	do
 		if [ -n "$folder"  -a -e $HOME/.config/$folder ]; then
-			Transhor $HOME/.config/$folder
+			Transhor "$HOME/.config/$folder"
 		fi
 	done
 
 	cp -a shell/config/* "$HOME"/.config
 	cp vi/vimrc "$HOME"/.config/nvim/init.vim
 
-	# if [ ! -d $HOME/.zinit ]; then
-	# 	mkdir $HOME/.zinit
-	# 	git clone https://github.com/zdharma/zinit.git $HOME/.zinit/bin
-	# fi
+	if [ ! -d "$HOME/.zinit" ]; then
+		mkdir "$HOME/.zinit"
+		git clone https://github.com/zdharma-continuum/zinit.git "$HOME/.zinit/bin"
+	fi
 }
+
 
 function GitandSSH()
 {
@@ -101,7 +102,8 @@ function LoadFile()
 	local line=$(grep "$1" "$2" | wc -l)
 
 	if [ "$line" -lt 1 ]; then #没有导出过则导出此变量
-		 sed -i  "1 a $1" $2
+		SourceLine=$((SourceLine+1))
+		sed -i  "$SourceLine a $1" "$2"
 	fi
 
 	return 0
@@ -130,12 +132,24 @@ function Load()
 	LoadFile 'source ~/.config/zsh/work.sh' "$file"
 }
 
+function OpenGlobalVPN()
+{
+	if curl -x socks5://127.0.0.1:10808 https://www.google.com --silent > /dev/null; then
+		echo "检测到代理，代理联网成功，开启全局代理..."
+		export ALL_PROXY="socks5://127.0.0.1:10808"
+		export http_proxy="http://127.0.0.1:10809"
+	else
+		echo "未检测到代理，后续下载可能会失败..."
+	fi
+}
+
 function main()
 {
-	cd "$START_DIR"  || return 1
-	CpConf
-	GitandSSH
-	Load
+	#cd "$START_DIR" || return 1
+	OpenGlobalVPN
+	#GitandSSH
+	#CpConf
+	#Load
 }
 
 main  "$@"

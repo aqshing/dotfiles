@@ -23,9 +23,9 @@ inoremap <C-a> <esc>ggVG"
 "单行复制粘贴
 inoremap <C-d> <esc>yypi
 "将当前行上移一行
-inoremap <C-S-up> <esc>ddkPi
+inoremap <C-up> <esc>ddkPi
 "将当前行下移一行
-inoremap <C-S-down> <esc>ddpi
+inoremap <C-down> <esc>ddpi
 "撤销
 inoremap <C-u> <esc>ui
 "反撤销

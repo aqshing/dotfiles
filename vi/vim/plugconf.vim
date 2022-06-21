@@ -41,9 +41,9 @@ let g:user_emmet_leader_key=','
 ""coc.nvim
 ""nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
 ""如果版本号小于810,禁止coc插件弹出警告
-""if version < 810
-""	let g:coc_disable_startup_warning = 1
-""endif
+if version < 810
+	let g:coc_disable_startup_warning = 1
+endif
 let g:coc_global_extensions = [
 	\ 'coc-json',
 	\ 'coc-diagnostic',

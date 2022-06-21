@@ -156,3 +156,41 @@
 ""	\ 'coc-syntax',
 ""	\ 'coc-translator',
 ""	\ 'coc-vimlsp']
+
+
+""bash
+""[ -a file ]: file 存在，则为true
+""[ -b file ]: file 存在并且是一个块（设备）文件，则为true
+""[ -c file ]: file 存在并且是一个字符（设备）文件，则为true
+""[ -d file ]: file 存在并且是一个目录，则为true
+""[ -e file ]: file 存在，则为true
+""[ -f file ]: file 存在并且是一个普通文件，则为true
+""[ -g file ]: file 存在并且设置了组 ID，则为true
+""[ -G file ]: file 存在并且属于有效的组 ID，则为true
+""[ -h file ]: file 存在并且是符号链接，则为true
+""[ -k file ]: file 存在并且设置了它的“sticky bit”，则为true
+""[ -L file ]: file 存在并且是一个符号链接，则为true
+""[ -N file ]: file 存在并且自上次读取后已被修改，则为true
+""[ -O file ]: file 存在并且属于有效的用户 ID，则为true
+""[ -p file ]: file 存在并且是一个命名管道，则为true
+""[ -r file ]: file 存在并且可读（当前用户有可读权限），则为true
+""[ -s file ]: file 存在且其长度大于零，则为true
+""[ -S file ]: file 存在且是一个网络 socket，则为true
+""[ -t fd ]:如果 fd 是一个文件描述符,并且重定向到终端,则为true
+""这可以用来判断是否重定向了标准输入/输出/错误
+""[ -u file ]: file 存在并且设置了 setuid 位，则为true
+""[ -w file ]: file 存在并且可写(当前用户拥有可写权限),则为true
+""[ -x file ]: file 存在并且可执行(有效用户有执行/搜索权限),则为true
+""[ file1 -nt file2 ]: FILE1比FILE2的更新时间最近,或者FILE1存在而FILE2不存在,则为true
+""[ file1 -ot file2 ]: FILE1比FILE2的更新时间更旧,或者FILE2存在而FILE1不存在,则为true
+""[ FILE1 -ef FILE2 ]: FILE1和FILE2引用相同的设备和inode编号,则为true
+
+""set -Exeuo pipefail 脚本头部加上它,方便调试
+""set -u:遇到不存在的变量就会报错,并停止执行
+""set -x:命令运行结果之前，先输出执行的命令
+""set -e:脚本只要发生错误，就终止执行
+""set +e可以关闭-e选项，set -e表示重新打开-e选项。
+""set -e有一个例外情况，就是不适用于管道命令。
+""set -o pipefail:只要有一个子命令失败，整个管道命令就失败，脚本就会终止执行。
+""set -E:一旦设置了-e参数，会导致函数内的错误不会被trap命令捕获。
+""  -E参数可以纠正这个行为，使得函数也能继承trap命令。

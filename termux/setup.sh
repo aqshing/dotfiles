@@ -1,13 +1,13 @@
 #!/data/data/com.termux/files/usr/bin/bash
 ###################################################
 # Filename: termux.sh
-# Author: shing
-# Email: www.asm.best
-# Created: 2020年11月23日 星期一 14时04分59秒
-# Changed: 2021-09-10 14:31:36
+# Author: aqshing
+# Email: aqdebug.com aqdebug@gmail.com
+# Brief: termux初始化安装脚本
+# Created: 2020-11-23 14:04:59
+# Changed: 2022-06-21 15:55:41
 ###################################################
-
-##set -xeuo pipefail
+# set -Exeuo pipefail
 
 function Transhman()
 {
@@ -31,7 +31,7 @@ pkg install -y libcurl curl wget unzip file
 ## 选安装
 ## Third-party tools
 pkg install -y openssh python nodejs neovim
-pkg install -y nginx php mariadb
+pkg install -y nginx php mariadb tmux
 ## Third-party libs
 pkg install -y perl openssl openssl-tool ffmpeg
 ## Better *nux tools
@@ -48,8 +48,9 @@ if [ -d "$HOME/.termux" ]; then
     Transhman "$HOME/.termux"
 fi
 
-if [ ! -d $HOME/.termux ]; then
-    mkdir $HOME/.termux
+if [ ! -d "$HOME/.termux" ]; then
+    mkdir "$HOME/.termux"
+# Filename: termux.sh
 fi
 
 #curl -fsLo $HOME/.termux/colors.properties --create-dirs https://github.com/einverne/dotfiles/raw/master/termux/colors.properties

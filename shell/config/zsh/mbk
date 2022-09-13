@@ -1,14 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###################################################
 # Filename: mbk
 # Author: aqshing
 # Email: aqdebug.com aqdebug@gmail.com
+# Brief: brief of script
+# Created: 2022-09-13 12:03:28
 # Brief: move file to file.bkp
 # Created: 2020-10-29 12:09:18
-# Changed: 2022-05-31 18:46:42
+# Changed: 2022-09-13 12:03:28
 ###################################################
-
-##set -xeuo pipefail
+# set -Exeuo pipefail
 
 if [ -f $1 ]; then
 	echo "move the file of [$1] to [$1.bkp]"

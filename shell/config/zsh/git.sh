@@ -1,10 +1,10 @@
-env=~/.ssh/agent.env
+ssh_env=~/.ssh/agent.env
 
-agent_load_env () { test -f "$env" && source "$env" >| /dev/null ; }
+agent_load_env () { test -f "$ssh_env" && source "$ssh_env" >| /dev/null ; }
 
 agent_start () {
-    (umask 077; ssh-agent >| "$env")
-    source "$env" >| /dev/null ;
+    (umask 077; ssh-agent >| "$ssh_env")
+    source "$ssh_env" >| /dev/null ;
 }
 
 agent_load_env
@@ -19,4 +19,4 @@ elif [ "$SSH_AUTH_SOCK" ] && [ "$agent_run_state" = 1 ]; then
     ssh-add "$HOME"/.ssh/*_rsa >| /dev/null 2>&1
 fi
 
-unset env
+unset ssh_env

@@ -1,12 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###################################################
-# Filename: bk.sh
+# Filename: bk
 # Author: aqshing
 # Email: aqdebug.com aqdebug@gmail.com
 # Brief: backup file to file.bkp
 # Created: 2020-10-29 12:09:18
-# Changed: 2022-05-31 18:40:46
+# Changed: 2022-09-13 12:01:44
 ###################################################
+# set -Exeuo pipefail
 if [ -f $1 ]; then
 	echo "copy the file of [$1] to [$1.bkp]"
 	cp $1{,.bkp}

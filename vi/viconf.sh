@@ -4,7 +4,7 @@
 # Author: shing
 # E-mail: www.asm.best
 # Created: Fri 09 Oct 2020 07:18:13 PM CST
-# Changed: 2021-09-18 21:45:28
+# Changed: 2022-07-01 17:00:41
 ###################################################
 
 ##set -xeuo pipefail
@@ -48,4 +48,4 @@ if [ ! -e $HOME/.local/share/nvim/site/autoload/plug.vim ]; then
 fi
 
 
-vi +PlugInstall
+##vi +PlugInstall

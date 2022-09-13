@@ -133,3 +133,9 @@ hi User5 cterm=none ctermfg=green ctermbg=0
 "    iabbrev xdate <c-r>=strftime("%Y-%m-%d")<CR>  " 当前日期
 "    iabbrev xtime <c-r>=strftime("%H:%M:%S")<CR>  " 当前时间
 "endif
+
+
+""work 和工作相关的放在下面
+if expand("%:e") == 'test'
+	set expandtab
+endif

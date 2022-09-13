@@ -39,7 +39,8 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'yggdroot/indentline', { 'on': 'IndentLinesToggle' }
 
 ""Format:格式化代码插件
-Plug 'rhysd/vim-clang-format'
+""Plug 'rhysd/vim-clang-format'
+Plug 'vim-autoformat/vim-autoformat'
 
 ""TrailSpace:清理行尾空格插件```deprecated
 ""Plug 'bronson/vim-trailing-whitespace'
@@ -48,7 +49,7 @@ Plug 'rhysd/vim-clang-format'
 ""Plug 'tpope/vim-commentary', { 'for': ['c', 'cpp', 'vim-plug'] }
 
 ""Gutentags:ctags代码阅读函数跳转插件
-Plug 'ludovicchabant/vim-gutentags'
+""Plug 'ludovicchabant/vim-gutentags'
 
 ""COC:c代码补全插件
 Plug 'neoclide/coc.nvim', {'branch': 'release'}

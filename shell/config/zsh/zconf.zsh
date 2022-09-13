@@ -83,7 +83,7 @@ zinit snippet 'https://github.com/robbyrussell/oh-my-zsh/blob/master/plugins/fd/
 # 配置 fzf 使用 fd
 export FZF_DEFAULT_COMMAND='fd --type f'
 # 初始化补全
-autoload -Uz compinit; compinit
+#autoload -Uz compinit; compinit
 # zinit 出于效率考虑会截获 compdef 调用，放到最后再统一应用，可以节省不少时间
 zinit cdreplay -q
 # ---- 加载完了 ----

@@ -12,8 +12,11 @@ nmap <S-q> :qa!<CR>
 "删除一行
 inoremap <leader>d <esc>ddi
 "批量复制粘贴(+:copy到系统剪切板,a:copy到A这个register中)
+"支持在Visual模式下，通过,y复制到系统剪切板
 vnoremap <leader>y "+y
 "vnoremap <leader>y "ay
+"支持在normal模式下，通过C-p粘贴系统剪切板
+""nnoremap <C-p> "*p
 nmap <leader>p "ap
 vnoremap <leader>c "by
 nmap <leader>v "bp

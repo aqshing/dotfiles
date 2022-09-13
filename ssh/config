@@ -10,7 +10,7 @@ Host *
 
 
 Host ecs
-	HostName 49.232.161.170
+	HostName 82.156.182.158
 ## 私钥文件
 	IdentityFile ~/.ssh/aqshing_rsa
 	User lighthouse

@@ -25,12 +25,15 @@ set shiftwidth=4
 set backspace=2
 "统一缩进为4
 set softtabstop=4
+""vim<740会出现粘贴<Tab>出错的情况
+if version > 800 || has('nvim')
 "自动缩进cindent:使用C标准风格缩进
 set cin
 "智能对齐
 set smartindent
 "自动对齐
 set autoindent
+endif
 "不要用空格代替制表符
 set noexpandtab
 "语法高亮
@@ -106,5 +109,99 @@ if has("win32")
 else
 	set fileformats=unix,mac,dos
 endif
-""""""""""""""""""""""""""""""end""""""""""""""""""""""""""""""
 
+
+"打开vim时,自动定位到上次最后编辑的位置, 需要确认 .viminfo 当前用户可写
+if has("autocmd")
+	au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
+
+
+"设置C文件一行的宽度限制为80字符
+au FileType c,cpp,python,vim set textwidth=120
+
+"让python支持PEP8风格的自动缩进
+""au BufNewFile,BufRead *.py
+""    \ set tabstop=4 |
+""    \ set softtabstop=4 |
+""    \ set shiftwidth=4 |
+""    \ set textwidth=79 |
+""    \ set expandtab |
+""    \ set autoindent |
+""    \ set fileformat=unix |
+
+"前端开发
+""au BufNewFile,BufRead *.js,*.html,*.css
+""    \ set tabstop=2 |
+""    \ set softtabstop=2 |
+""    \ set shiftwidth=2 |
+
+
+"auto spell 编辑markdown时，自动打开拼写检查
+"autocmd BufRead,BufNewFile *.md setlocal spell
+
+
+"相对行号: 行号变成相对，可以用 nj/nk 进行跳转
+set relativenumber number
+au FocusLost * :set norelativenumber number
+au FocusGained * :set relativenumber
+" 插入模式下用绝对行号, 普通模式下用相对行号
+autocmd InsertEnter * :set norelativenumber number
+autocmd InsertLeave * :set relativenumber
+"<ctrl-n>进行相对行号/绝对行号切换
+function! NumberToggle()
+	if(&relativenumber == 1)
+		set norelativenumber number
+	else
+		set relativenumber
+	endif
+endfunc
+
+
+"为方便复制，用<F4>开启/关闭行号显示:
+function! HideNumber()
+	if(&relativenumber == &number)
+		set relativenumber! number!
+	elseif(&number)
+		set number!
+	else
+		set relativenumber!
+	endif
+	set number?
+endfunc
+
+
+"保存文件时, 自动移除多余空格
+"保存python文件时删除多余空格
+fun! <SID>StripTrailingWhitespaces()
+	let l = line(".")
+	let c = col(".")
+	%s/\s\+$//e
+	call cursor(l, c)
+endfun
+autocmd FileType c,cpp,java,go,php,javascript,puppet,python,rust,twig,xml,yml,perl autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+"这个函数通过替换命令删除行尾空格
+func! DeleteTrailingWS()
+	exec "normal mz"
+	%s/\s\+$//ge
+	exec "normal `z"
+endfunc
+
+
+"多窗口编辑时, 临时放大某个窗口, 编辑完再切回原来的布局
+"Zoom / Restore window.快捷键:<Leader>z控制此功能的开关
+function! s:ZoomToggle() abort
+	if exists('t:zoomed') && t:zoomed
+		execute t:zoom_winrestcmd
+		let t:zoomed = 0
+	else
+		let t:zoom_winrestcmd = winrestcmd()
+		resize
+		vertical resize
+		let t:zoomed = 1
+	endif
+endfunction
+command! ZoomToggle call s:ZoomToggle()
+
+""********************end of vim setting***********************
+""********************vim所有配置到此结束**********************

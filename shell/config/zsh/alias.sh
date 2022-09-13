@@ -83,7 +83,7 @@ function gvpn() {
 export ALL_PROXY="socks5://127.0.0.1:10808"
 export http_proxy="http://127.0.0.1:10809"
 }
-# 用 CURL 命令分析请求时间
+# 用CURL命令分析请求时间
 # https://schaepher.github.io/2019/08/29/curl-analyze/
 # https://stackoverflow.com/questions/18215389/how-do-i-measure-request-and-response-times-at-once-using-curl
 function ct() {
@@ -117,6 +117,10 @@ function rr() {
 
 	t=$(cat "$HOME/.Trash/.count")
 	t=$((t+1))
+	if [ ! "$1" ]; then
+		echo "now: $t, if it great than 10, will delete."
+		return 0
+	fi
 	echo $t > "$HOME/.Trash/.count"
 
 	if [ "$t" -gt 10 ]; then
@@ -227,7 +231,7 @@ unset zle_bracketed_paste
 #source ~/.config/zsh/bracketed-paste.zsh
 
 # 将zsh的type命令仿真为bash的type命令
-alias type='bash ~/.config/zsh/type'
+alias type="bash ${0:h}/type"
 # 让zsh像bash一样提示未安装的软件
 [ -r /etc/zsh_command_not_found ] && source /etc/zsh_command_not_found
 fi

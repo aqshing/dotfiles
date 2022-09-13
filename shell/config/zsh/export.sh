@@ -11,20 +11,32 @@ export GOPATH=/opt/go
 export JAVA_HOME=/opt/java
 export LUA_HOME=/opt/lua
 # path_end
-
+# $1: filename="$HOME/.config/zsh/export.sh"
 function AddPATH() {
-local filename="$HOME/.config/zsh/export.sh"
-local f=$(($(grep -n -m 1 '# path_start' "$filename" | cut -f1 -d:)+1))
-local l=$(($(grep -n -m 1 '# path_end' "$filename" | cut -f1 -d:)-1))
-local s=$(sed -n "${f},${l}p" "$filename")
+local f=$(($(grep -n -m 1 '# path_start' "$1" | cut -f1 -d:)+1))
+local l=$(($(grep -n -m 1 '# path_end' "$1" | cut -f1 -d:)-1))
+local s i
+# 判断在bash中还是zsh中
+if [[ "$0" == "AddPATH" ]]; then
+#zsh 将变量导入到PATH中
+for ((i=$f; i<=$l; i++)) {
+	s=${"$(<$1)"[(f)$i]}
+    if [ -e "${s##*=}/bin" ]; then
+        PATH=$PATH:"${s##*=}/bin"
+    fi
+}
+else
+#bash 将变量导入到PATH中
+s=$(sed -n "${f},${l}p" "$1")
 IFS=$'\n'
 for i in ${s}; do
     if [ -e "${i##*=}/bin" ]; then
         PATH=$PATH:"${i##*=}/bin"
     fi
 done
+fi
 }
-AddPATH && unset AddPATH
+AddPATH "$0" && unset AddPATH
 # PKG链接库
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$PYTHON_HOME/lib/pkgconfig:/opt/opencv/lib/pkgconfig
 # C/C++动态库

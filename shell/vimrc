@@ -1,4 +1,4 @@
-if version > 800
+if version > 800 || has('nvim')
 source $HOME/.vim/plugins.vim
 source $HOME/.vim/plugconf.vim
 endif
@@ -11,7 +11,7 @@ autocmd!
 autocmd FileType markdown source $HOME/.vim/md-snippets.vim
 autocmd FileType c,cpp,java,sh source $HOME/.vim/code.vim
 ""autocmd FileType c,cpp source $HOME/.vim/test.vim
-if version > 800
+if version > 800 || has('nvim')
 ""自动格式化c/c++ code
 autocmd FileType c,cpp ClangFormatAutoEnable
 ""新建.c,.h,.sh,.java文件，自动插入文件头

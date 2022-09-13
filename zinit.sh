@@ -5,10 +5,9 @@
 # Email: aqdebug.com aqdebug@gmail.com
 # Brief: init shell
 # Created: 2020-11-05 20:53:24
-# Changed: 2022-06-21 16:14:29
+# Changed: 2022-09-19 16:30:46
 ###################################################
-
-##set -xeuo pipefail
+# set -xeuo pipefail
 # 架构 x86 x86_64 arm aarch64
 HOST_ARCH=$(uname -m | sed -e 's/i.86/i686/' -e 's/^armv.*/arm/')
 # 内核：Linux
@@ -19,45 +18,49 @@ DISTRO=$(cat /etc/os-release | grep '^ID=' | cut -d '=' -f 2 | tr "[:lower:]" "[
 USER_ID=$(id -u)
 # 当前用户名字
 USER_NAME=$(whoami)
-
-
-START_DIR=$(dirname "$0")
-START_DIR=$(cd "$START_DIR" || exit; pwd)
+# 脚本所在目录
+START_DIR=$(cd "$(dirname "$0")" || exit; pwd)
 
 ConfFile='~/.bashrc'
 SourceLine=0
 
 
-function Transhor()
-{
+function Transhor() {
 	if [ ! -d "$HOME/.backups" ]; then
 	    mkdir "$HOME/.backups"
 	fi
-
-	nowtime=$(date +%Y-%m-%d_%H:%M:%S)
 	for i in "$@";
 	do
 		filename=$(basename "$i")
-		mv "$i" "$HOME/.backups/$filename.$nowtime"
+		mv "$i" "$HOME/.backups/$filename.$(date +%y%m%d%H%M%S)"
 	done
 }
 
+# @brief 创建软链接, 或者复制文件, 默认创建软链接
+function LinkOrCopy() {
+	if [ -e "$2" ]; then
+		Transhor "$2"
+	fi
+	if [ "$3" == "cp" ]; then
+		cp -a "$1" "$2"
+	else
+		ln -is "$1" "$2"
+	fi
+}
 
-function CpConf()
-{
+
+function CpConf() {
 	if [ ! -d "$HOME/.config" ]; then
 		mkdir "$HOME/.config"
 	fi
 
 	for folder in $(ls shell/config)
 	do
-		if [ -n "$folder"  -a -e $HOME/.config/$folder ]; then
-			Transhor "$HOME/.config/$folder"
+		if [ -n "$folder" ]; then
+			LinkOrCopy "$START_DIR/shell/config/$folder" "$HOME/.config/$folder"
 		fi
 	done
-
-	cp -a shell/config/* "$HOME"/.config
-	cp vi/vimrc "$HOME"/.config/nvim/init.vim
+	LinkOrCopy "$START_DIR/shell/vimrc" "$HOME/.config/nvim/init.vim"
 
 	if [ ! -d "$HOME/.zinit" ]; then
 		mkdir "$HOME/.zinit"
@@ -66,61 +69,50 @@ function CpConf()
 }
 
 
-function GitandSSH()
-{
+function GitandSSH() {
 	git config --global user.name "aqshing"
 	git config --global user.email aqdebug@gmail.com
-	git config --global core.editor vim
+	git config --global core.editor vi
 
 	if [ ! -d "$HOME/.ssh" ]; then
 		mkdir "$HOME/.ssh"
 	fi
-	if [ -e "$HOME/.ssh/config" ]; then
-		Transhor "$HOME/.ssh/config"
-	fi
-	cp -a ssh/config "$HOME/.ssh"
 
-	if [ ! -d "$HOME/.proxychains" ]; then
-		mkdir "$HOME/.proxychains"
-	fi
-	if [ -e "$HOME/.proxychains/proxychains.conf" ]; then
-		Transhor "$HOME/.proxychains/proxychains.conf"
-	fi
-	cp -a shell/proxychains/proxychains.conf "$HOME/.proxychains"
+	LinkOrCopy "$START_DIR/ssh/config" "$HOME/.ssh/config" "cp"
+
+	LinkOrCopy "$START_DIR/shell/proxychains" "$HOME/.proxychains"
+
+	LinkOrCopy "$START_DIR/shell/tmux.conf.local" "$HOME/.tmux.conf.local"
+
+	LinkOrCopy "$START_DIR/vi" "$HOME/.vim"
+
+	LinkOrCopy "$START_DIR/shell/vimrc" "$HOME/.vimrc"
 }
 
 # @brief: 导出路径到PATH路径
 # @param: $1:变量名称
 # @param: $2:导出路径
 # @eg: SetPATH JAVA_HOME /opt/java
-# 会在~/.bashrc中检测JAVA_HOME变量，若检测到，则修正导出路径
-# 若没有则追加 export JAVA_HOME=/opt/java
-# export PATH=$PATH:$JAVA_HOME/bin 这两行内容到文件末尾
-function LoadFile()
-{
+function LoadFile() {
 	# 获取$1变量在.[ba|z]shrc出现的位置
-	local line=$(grep "$1" "$2" | wc -l)
+	line=$(grep "$1" "$2" | wc -l)
 
 	if [ "$line" -lt 1 ]; then #没有导出过则导出此变量
 		SourceLine=$((SourceLine+1))
 		sed -i  "$SourceLine a $1" "$2"
 	fi
-
-	return 0
 }
 
-function Load()
-{
+function Load() {
 	local file="$HOME/.bashrc"
 	# 检测是否存在zsh
 	if [ -e "$HOME/.zshrc" ]; then
 		echo '检测到~/.zshrc，您当前使用的是ZSH吗？'
 		echo '如果是，请输入[y|yes]确认将配置写入.zshrc'
 		echo '否则将会把配置写入~/.bashrc'
-		read -t 30 -p "please choice option:{y|n}:" choice
+		read -rt 30 -p "please choice option:{y|n}:" choice
 		if [ "$choice" == "y" ] || [ "$choice" == "yes" ]; then
 			file="$HOME/.zshrc"
-			ConfFile='~/.zshrc'
 			#
 			LoadFile 'source ~/.zinit/bin/zinit.zsh' "$file"
 			LoadFile 'source ~/.config/zsh/zconf.zsh' "$file"
@@ -132,24 +124,24 @@ function Load()
 	LoadFile 'source ~/.config/zsh/work.sh' "$file"
 }
 
-function OpenGlobalVPN()
-{
+function OpenGlobalVPN() {
 	if curl -x socks5://127.0.0.1:10808 https://www.google.com --silent > /dev/null; then
 		echo "检测到代理，代理联网成功，开启全局代理..."
 		export ALL_PROXY="socks5://127.0.0.1:10808"
 		export http_proxy="http://127.0.0.1:10809"
 	else
 		echo "未检测到代理，后续下载可能会失败..."
+		export ALL_PROXY=""
+		export http_proxy=""
 	fi
 }
 
-function main()
-{
-	#cd "$START_DIR" || return 1
+function main() {
+	cd "$START_DIR" || return 1
 	OpenGlobalVPN
-	#GitandSSH
-	#CpConf
-	#Load
+	GitandSSH
+	CpConf
+	Load
 }
 
 main  "$@"

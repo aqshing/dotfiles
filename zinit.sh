@@ -5,7 +5,7 @@
 # Email: aqdebug.com aqdebug@gmail.com
 # Brief: init shell
 # Created: 2020-11-05 20:53:24
-# Changed: 2022-09-19 16:30:46
+# Changed: 2022-09-22 18:30:47
 ###################################################
 # set -xeuo pipefail
 # 架构 x86 x86_64 arm aarch64
@@ -48,13 +48,12 @@ function LinkOrCopy() {
 	fi
 }
 
-
 function CpConf() {
 	if [ ! -d "$HOME/.config" ]; then
 		mkdir "$HOME/.config"
 	fi
-
-	for folder in $(ls shell/config)
+	set -x
+	for folder in "shell/config/*"
 	do
 		if [ -n "$folder" ]; then
 			LinkOrCopy "$START_DIR/shell/config/$folder" "$HOME/.config/$folder"

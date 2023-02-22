@@ -1,0 +1,12 @@
+# if windows, 将Windows的环境变量(%path%)读取到PATH变量中
+if [ ! -e "$HOME/._.bat" ]; then
+    f="${HOME/\//}"; f="${f/\//:/}/._.p"
+    echo "echo %path% > $f" > "$HOME"/._.bat
+fi
+# 先通过cmd将%path%读取到._.p文件中, 再从文件读取到PATH中
+IFS=$'\n'
+for f in $("$HOME/._.bat" > /dev/null && sed -n -e 's#\\#/#g' -e's/://g' -e 's/;/\n/gp' < "$HOME/._.p"| awk '{print "/" $0}'); do
+    if [ -e "$f" ]; then
+        PATH=$PATH:"$f"
+    fi
+done

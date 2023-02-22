@@ -1,2 +1,4 @@
 shell/config/nvim/tmp/*
 shell/config/nvim/init.vim
+shcnf/nvim/tmp/*
+shcnf/nvim/init.vim

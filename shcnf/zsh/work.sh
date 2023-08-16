@@ -1,6 +1,3 @@
-if command -v cnpm > /dev/null 2>&1 ; then
-alias vi='nvim'
-fi
 alias du='du -sh'
 alias ansible='python /opt/ansible'
 alias ansible-playbook='python /opt/ansible-playbook'
@@ -48,20 +45,26 @@ eval set -- "$ARGS"
 while :
 do
     case "$1" in
-        -u | --uname)            UNAME="$2"     ; shift 2  ;;
-        -p | --passwd)           PASSWD="$2"    ; shift 2  ;;
-        -h | --host)             HOST="$2"      ; shift 2  ;;
-        -P | --port)             PORT="$2"      ; shift 2  ;;
-        -V | --version)          MENU=1         ; shift    ;;
-        -e)      MENU=2;    STATEMENT="$2"      ; shift 2  ;;
+        -u | --uname)           UNAME="$2"    ; shift 2  ;;
+        -p | --passwd)         PASSWD="$2"    ; shift 2  ;;
+        -h | --host)             HOST="$2"    ; shift 2  ;;
+        -P | --port)             PORT="$2"    ; shift 2  ;;
+        -V | --version)          MENU=1       ; shift    ;;
+        -S)                    DBSOCK="$2"    ; shift 2  ;;
+        -e)      MENU=2;    STATEMENT="$2"    ; shift 2  ;;
         --) shift; break ;;
     esac
 done
+if [ -z "$DBSOCK" ]; then
+CONN="-h${HOST}"
+else
+CONN="-S${DBSOCK}"
+fi
 # echo "name:$UNAME pwd:$PASSWD ip:$HOST port:$PORT"
 if [ $MENU -eq 0 ]; then
-"${MYSQL_BIN}" -u"${UNAME}" -p"${PASSWD}" -h"${HOST}" -P"${PORT}" --local-infile=1
+"${MYSQL_BIN}" -u"${UNAME}" -p"${PASSWD}" "${CONN}" -P"${PORT}" --local-infile=1	
 elif  [ $MENU -eq 2 ]; then
-"${MYSQL_BIN}" -u"${UNAME}" -p"${PASSWD}" -h"${HOST}" -P"${PORT}" --local-infile=1 -e "$STATEMENT"
+"${MYSQL_BIN}" -u"${UNAME}" -p"${PASSWD}" "${CONN}" -P"${PORT}" --local-infile=1 -e "$STATEMENT"
 else
 "${MYSQL_BIN}" --version
 fi

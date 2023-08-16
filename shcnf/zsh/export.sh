@@ -10,6 +10,7 @@ export VERILA_HOME=/opt/verilator
 export GOPATH=/opt/go
 export JAVA_HOME=/opt/java
 export LUA_HOME=/opt/lua
+export REDIS_HOME=/opt/redis
 # path_end
 filename="$HOME/.config/zsh/export.sh"
 # $1: filename="$HOME/.config/zsh/export.sh"
@@ -21,6 +22,10 @@ local s i
 if [[ "$0" == "AddPATH" ]]; then
 #zsh 将变量导入到PATH中
 for ((i=$f; i<=$l; i++)) {
+	if [[ $i == "#"* ]]; then
+        continue  # 跳过以#开头的行
+    fi
+
 	s=${"$(<$1)"[(f)$i]}
     if [ -e "${s##*=}/bin" ]; then
         PATH=$PATH:"${s##*=}/bin"
@@ -34,6 +39,10 @@ else
 s=$(sed -n "${f},${l}p" "$1")
 IFS=$'\n'
 for i in ${s}; do
+	if [[ $i == "#"* ]]; then
+        continue  # 跳过以#开头的行
+    fi
+
     if [ -e "${i##*=}/bin" ]; then
         PATH=$PATH:"${i##*=}/bin"
     else

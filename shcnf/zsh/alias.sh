@@ -1,5 +1,5 @@
 if ! grep -i "termux" <<< "$PREFIX" && [ "$TERM" = "xterm" ]; then
-	export TERM=xterm-256color
+export TERM=xterm-256color    # 开启terminal 256色支持, 将8色改为256色支持
 fi # [ "$(tput colors)" = 8 ] && [ "$TERM" = "xterm" ]
 alias ,='cd -'
 # la: 查看隐藏文件
@@ -25,6 +25,8 @@ alias gdb='gdb -q'
 alias cpu="grep -c '^processor' /proc/cpuinfo"
 #sudo提权后使用别名https://mp.weixin.qq.com/s/LEWlF5reOTZQWFRx43lAIg
 alias sudo='sudo '
+# 清除所有ssh-agent缓存的pem
+alias sshcl='ssh-add -D'
 # 模糊搜索进程
 function pg() {
 	for i in "$@";
@@ -46,7 +48,7 @@ alias hg='history | grep'
 alias ig="ifconfig | grep inet | sed -n -e 's/^\s*//' -e '/inet 127/d' -e 's@inet@ipv4@g' -e 's#\s*netm.*##gp'"
 alias ig6="ifconfig | grep inet | sed -n -e 's/^\s*//' -e '/inet 127/d' -e 's/inet6/ipv6/g' -e 's@inet@ipv4@g' -e 's#\s*netm.*##gp' -e 's#\s*pref.*##gp'"
 alias bk='bash ~/.config/zsh/bk'
-alias mbk='bash ~/.config/zsh/mbk'
+alias mv='bash ~/.config/zsh/mbk'
 # git
 alias ga='git add'
 alias gb='git branch'
@@ -84,6 +86,12 @@ alias v='proxychains4'
 # 将npm替换为cnpm
 if command -v cnpm > /dev/null 2>&1 ; then
 alias npm='cnpm'
+fi
+# 依次检测nvim vim 是否存在
+if command -v nvim > /dev/null 2>&1 ; then
+alias vi='nvim'
+elif command -v vim > /dev/null 2>&1 ; then
+alias vi='vim'
 fi
 # Global Terminal VPN
 function gvpn() {
@@ -167,7 +175,7 @@ function qcompress() {
 
 # 针对bash专门定制的别名、函数和配置
 if grep -iqE "bash$" <<< "$0" ;  then
-alias ...='source $HOME/.bashrc'
+alias ...='. $HOME/.bashrc'
 # 自动解压：判断文件后缀名并调用相应解压命令
 alias x='q-extract'
 function q-extract() {
@@ -215,7 +223,7 @@ bind '"\e[1;5A":beginning-of-line'
 bind '"\e[1;5B":end-of-line'
 fi
 else
-alias ...='source $HOME/.zshrc'
+alias ...='. $HOME/.zshrc'
 #http://mindonmind.github.io/notes/linux/zsh_bindkeys.html
 #使用bindkey命令，第一个参数为对应快捷键的 CSI 序列 ，
 #想知道某种快捷组合键的 CSI 序列，有如下两种方法:
@@ -237,7 +245,7 @@ bindkey "^[[1;5C" emacs-forward-word
 # https://stackoverflow.com/questions/33452870/tmux-bracketed-paste-mode-issue-at-command-prompt-in-zsh-shell
 #github.com/tokiclover/dotfiles/blob/master/.zsh/lib/bracketed-paste.zsh
 unset zle_bracketed_paste
-#source ~/.config/zsh/bracketed-paste.zsh
+#. ~/.config/zsh/bracketed-paste.zsh
 
 # 将zsh的type命令仿真为bash的type命令
 alias type="bash ${0:h}/type"
@@ -245,3 +253,4 @@ alias type="bash ${0:h}/type"
 [ -r /etc/zsh_command_not_found ] && . /etc/zsh_command_not_found
 fi
 #set -o vi
+alias 。。。=...

@@ -1,3 +1,4 @@
+# shellcheck disable=SC2148
 # path_start
 export CMAKE_HOME=/opt/cmake
 export NODE_HOME=/opt/node
@@ -21,11 +22,12 @@ local s i
 # 判断在bash中还是zsh中
 if [[ "$0" == "AddPATH" ]]; then
 #zsh 将变量导入到PATH中
+# shellcheck disable=SC2004
 for ((i=$f; i<=$l; i++)) {
 	if [[ $i == "#"* ]]; then
         continue  # 跳过以#开头的行
     fi
-
+    # shellcheck disable=SC2301,SC2086
 	s=${"$(<$1)"[(f)$i]}
     if [ -e "${s##*=}/bin" ]; then
         PATH=$PATH:"${s##*=}/bin"

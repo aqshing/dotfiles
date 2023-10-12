@@ -238,3 +238,5 @@ for T in `find /usr/share/terminfo -type f -printf '%f '`;do echo "$T `tput -T $
 开启终端，查看终端类型：echo $TERM
 接着查看 xterm 终端支持的颜色：tput colors
 xterm 终端默认还是8色的。
+
+wget -c -r -np -k -L -p -e "https_proxy=http://127.0.0.1:10809"

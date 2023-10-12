@@ -1,6 +1,7 @@
-if ! grep -i "termux" <<< "$PREFIX" && [ "$TERM" = "xterm" ]; then
-export TERM=xterm-256color    # 开启terminal 256色支持, 将8色改为256色支持
-fi # [ "$(tput colors)" = 8 ] && [ "$TERM" = "xterm" ]
+# shellcheck disable=SC2148
+if ! grep -i "termux" <<<"$PREFIX" && [ "$TERM" = "xterm" ]; then
+    export TERM=xterm-256color # 开启terminal 256色支持, 将8色改为256色支持
+fi                             # [ "$(tput colors)" = 8 ] && [ "$TERM" = "xterm" ]
 alias ,='cd -'
 # la: 查看隐藏文件
 alias la='ls -A'
@@ -22,6 +23,10 @@ alias scp='scp -r'
 alias gdb='gdb -q'
 # 查看本机的DNS域名解析服务器
 ##alias dns="sed -n 's/nameserver/dns/gp' /etc/resolv.conf"
+# 查看默认网关 route -n
+##alias wg="ip route show | grep default"
+# 查看实时网络流量速度 dstat -cdmnry
+##alias nsp=dstat -n
 alias cpu="grep -c '^processor' /proc/cpuinfo"
 #sudo提权后使用别名https://mp.weixin.qq.com/s/LEWlF5reOTZQWFRx43lAIg
 alias sudo='sudo '
@@ -29,10 +34,9 @@ alias sudo='sudo '
 alias sshcl='ssh-add -D'
 # 模糊搜索进程
 function pg() {
-	for i in "$@";
-	do
-		ps aux | grep -v grep | grep "$i"
-	done
+    for i in "$@"; do # shellcheck disable=SC2009
+        ps aux | grep -v grep | grep "$i"
+    done
 }
 alias tg='top | grep'
 alias hg='history | grep'
@@ -66,7 +70,7 @@ alias nq='nginx -s quit'
 alias dr='docker run'
 alias dp='docker ps'
 function de() {
-	docker exec -it "$1" /bin/bash
+    docker exec -it "$1" /bin/bash
 }
 alias ds='docker search --limit=5'
 alias di='docker images'
@@ -84,20 +88,20 @@ alias vip='proxychains4 curl ipinfo.io'
 alias vpnt='curl -x socks5://127.0.0.1:10808 https://www.google.com -v'
 alias v='proxychains4'
 # 将npm替换为cnpm
-if command -v cnpm > /dev/null 2>&1 ; then
-alias npm='cnpm'
+if command -v cnpm >/dev/null 2>&1; then
+    alias npm='cnpm'
 fi
 # 依次检测nvim vim 是否存在
-if command -v nvim > /dev/null 2>&1 ; then
-alias vi='nvim'
-elif command -v vim > /dev/null 2>&1 ; then
-alias vi='vim'
+if command -v nvim >/dev/null 2>&1; then
+    alias vi='nvim'
+elif command -v vim >/dev/null 2>&1; then
+    alias vi='vim'
 fi
 # Global Terminal VPN
 function gvpn() {
-#全局终端代理
-export ALL_PROXY="socks5://127.0.0.1:10808"
-export http_proxy="http://127.0.0.1:10809"
+    #全局终端代理
+    export ALL_PROXY="socks5://127.0.0.1:10808"
+    export http_proxy="http://127.0.0.1:10809"
 }
 # 用CURL命令分析请求时间
 # https://schaepher.github.io/2019/08/29/curl-analyze/
@@ -115,49 +119,48 @@ SSL 握手    appconnect:  %{time_appconnect}s\n\
 }
 # 模糊通杀进程
 #eg: pk nginx
-function pk() {
-#[ "$1" ] && pgrep "$1" | xargs -I {} kill -9 {}
-[ "$1" ] && ps aux | grep -v grep | grep "$1" | awk '{ print $2}' | xargs -I {} kill -9 {}
+function pk() { # shellcheck disable=SC2009
+    #[ "$1" ] && pgrep "$1" | xargs -I {} kill -9 {}
+    [ "$1" ] && ps aux | grep -v grep | grep "$1" | awk '{ print $2}' | xargs -I {} kill -9 {}
 }
 # 二维码生成器 #Terminal QR Code
 #eg: qrcode https://aqdebug.com
 function qrcode() {
-	echo "$1" | curl -F-=\<- qrenco.de
+    echo "$1" | curl -F-=\<- qrenco.de
 }
 # 删除文件到回收站
 function rr() {
-	if [ ! -e "$HOME/.Trash/.count" ]; then
-		mkdir "$HOME/.Trash"
-		echo 0 > "$HOME/.Trash/.count"
-	fi
+    if [ ! -e "$HOME/.Trash/.count" ]; then
+        mkdir "$HOME/.Trash"
+        echo 0 >"$HOME/.Trash/.count"
+    fi
 
-	t=$(cat "$HOME/.Trash/.count")
-	if [ ! "$1" ]; then
-		echo "now: $t, if it great than 10, will delete."
-		return 0
-	fi
-	t=$((t+1))
-	echo $t > "$HOME/.Trash/.count"
+    t=$(cat "$HOME/.Trash/.count")
+    if [ ! "$1" ]; then
+        echo "now: $t, if it great than 10, will delete."
+        return 0
+    fi
+    t=$((t + 1))
+    echo $t >"$HOME/.Trash/.count"
 
-	if [ "$t" -gt 10 ]; then
-		rm -rf "$HOME/.Trash"
-		mkdir "$HOME/.Trash"
-		echo 1 > "$HOME/.Trash/.count"
-	fi
+    if [ "$t" -gt 10 ]; then
+        rm -rf "$HOME/.Trash"
+        mkdir "$HOME/.Trash"
+        echo 1 >"$HOME/.Trash/.count"
+    fi
 
-	## $(date +%Y-%m-%d_%H:%M:%S)
-	nowtime=$(date +%y%m%d%H%M%S)
-	for i in "$@";
-	do
-		filename=$(basename "$i")
-		mv "$i" "$HOME/.Trash/$filename.$nowtime"
-	done
+    ## $(date +%Y-%m-%d_%H:%M:%S)
+    nowtime=$(date +%y%m%d%H%M%S)
+    for i in "$@"; do
+        filename=$(basename "$i")
+        mv "$i" "$HOME/.Trash/$filename.$nowtime"
+    done
 }
 
 # 自动压缩：判断后缀名并调用相应压缩程序
 alias c='qcompress'
 function qcompress() {
-    if [ -n "$1" ] ; then
+    if [ -n "$1" ]; then
         FILE="$1"
         case "$FILE" in
         *.tar) shift && tar -cf "$FILE" "$*" ;;
@@ -174,83 +177,85 @@ function qcompress() {
 }
 
 # 针对bash专门定制的别名、函数和配置
-if grep -iqE "bash$" <<< "$0" ;  then
-alias ...='. $HOME/.bashrc'
-# 自动解压：判断文件后缀名并调用相应解压命令
-alias x='q-extract'
-function q-extract() {
-    if [ -f "$1" ] ; then
-        case "$1" in
-        *.tar.bz2)   tar -xvjf "$1"    ;;
-        *.tar.gz)    tar -xvzf "$1"    ;;
-        *.tar.xz)    tar -xvJf "$1"    ;;
-        *.bz2)       bunzip2   "$1"    ;;
-        *.rar)       rar x  "$1"       ;;
-        *.gz)        gunzip  "$1"      ;;
-        *.tar)       tar -xvf "$1"     ;;
-        *.tbz2)      tar -xvjf "$1"    ;;
-        *.tgz)       tar -xvzf "$1"    ;;
-        *.zip)       unzip  "$1"       ;;
-        *.Z)         uncompress  "$1"  ;;
-        *.7z)        7z x  "$1"        ;;
-        *)           echo "don't know how to extract '$1'..." ;;
-        esac
-    else
-        echo "'$1' is not a valid file!"
+if grep -iqE "bash$" <<<"$0"; then
+    alias ...='. $HOME/.bashrc'
+    # 自动解压：判断文件后缀名并调用相应解压命令
+    alias x='q-extract'
+    function q-extract() {
+        if [ -f "$1" ]; then
+            case "$1" in
+            *.tar.bz2) tar -xvjf "$1" ;;
+            *.tar.gz) tar -xvzf "$1" ;;
+            *.tar.xz) tar -xvJf "$1" ;;
+            *.bz2) bunzip2 "$1" ;;
+            *.rar) rar x "$1" ;;
+            *.gz) gunzip "$1" ;;
+            *.tar) tar -xvf "$1" ;;
+            *.tbz2) tar -xvjf "$1" ;;
+            *.tgz) tar -xvzf "$1" ;;
+            *.zip) unzip "$1" ;;
+            *.Z) uncompress "$1" ;;
+            *.7z) 7z x "$1" ;;
+            *) echo "don't know how to extract '$1'..." ;;
+            esac
+        else
+            echo "'$1' is not a valid file!"
+        fi
+    }
+
+    # 放到~/.bashrc 给man增加漂亮的色彩高亮
+    export LESS_TERMCAP_mb=$'\E[1m\E[32m'
+    export LESS_TERMCAP_mh=$'\E[2m'
+    export LESS_TERMCAP_mr=$'\E[7m'
+    export LESS_TERMCAP_md=$'\E[1m\E[36m'
+    export LESS_TERMCAP_ZW=""
+    export LESS_TERMCAP_us=$'\E[4m\E[1m\E[37m'
+    export LESS_TERMCAP_me=$'\E(B\E[m'
+    export LESS_TERMCAP_ue=$'\E[24m\E(B\E[m'
+    export LESS_TERMCAP_ZO=""
+    export LESS_TERMCAP_ZN=""
+    export LESS_TERMCAP_se=$'\E[27m\E(B\E[m'
+    export LESS_TERMCAP_ZV=""
+    export LESS_TERMCAP_so=$'\E[1m\E[33m\E[44m'
+    # 判断是否处于交互式终端中
+    if [[ $- =~ i ]]; then
+        # bash键位映射,同下zsh
+        bind '"\e[1;5F":kill-word'
+        bind '"\e[1;5H":backward-kill-word'
+        bind '"\e[1;5A":beginning-of-line'
+        bind '"\e[1;5B":end-of-line'
     fi
-}
-
-# 放到~/.bashrc 给man增加漂亮的色彩高亮
-export LESS_TERMCAP_mb=$'\E[1m\E[32m'
-export LESS_TERMCAP_mh=$'\E[2m'
-export LESS_TERMCAP_mr=$'\E[7m'
-export LESS_TERMCAP_md=$'\E[1m\E[36m'
-export LESS_TERMCAP_ZW=""
-export LESS_TERMCAP_us=$'\E[4m\E[1m\E[37m'
-export LESS_TERMCAP_me=$'\E(B\E[m'
-export LESS_TERMCAP_ue=$'\E[24m\E(B\E[m'
-export LESS_TERMCAP_ZO=""
-export LESS_TERMCAP_ZN=""
-export LESS_TERMCAP_se=$'\E[27m\E(B\E[m'
-export LESS_TERMCAP_ZV=""
-export LESS_TERMCAP_so=$'\E[1m\E[33m\E[44m'
-# 判断是否处于交互式终端中
-if [[ $- =~ i ]]; then
-# bash键位映射,同下zsh
-bind '"\e[1;5F":kill-word'
-bind '"\e[1;5H":backward-kill-word'
-bind '"\e[1;5A":beginning-of-line'
-bind '"\e[1;5B":end-of-line'
-fi
 else
-alias ...='. $HOME/.zshrc'
-#http://mindonmind.github.io/notes/linux/zsh_bindkeys.html
-#使用bindkey命令，第一个参数为对应快捷键的 CSI 序列 ，
-#想知道某种快捷组合键的 CSI 序列，有如下两种方法:
-#1.先按 Ctrl-V 然后再按组合键，如 Ctrl-A
-#2.输入 cat > /dev/null ，之后输入组合键
-# 更改 Ctrl+u 从光标删除到行首,而不是删除一整行
-bindkey "^U" backward-kill-line
-# Ctrl+End 向后删除一个单词
-bindkey "^[[1;5F" kill-word
-# Ctrl+Home 向前删除一个单词
-bindkey "^[[1;5H" backward-kill-word
-# 映射 Ctrl+↑ 为返回到行首,相当于 Home
-bindkey "^[[1;5A" beginning-of-line
-# 映射 Ctrl+↓ 为返回到行首,相当于 End
-bindkey "^[[1;5B" end-of-line
-# 使zsh前向词行为与bash/emacs中的行为相同
-bindkey "^[[1;5C" emacs-forward-word
-# 关闭括号粘贴模式 bing搜索zsh bracketed-paste-begin
-# https://stackoverflow.com/questions/33452870/tmux-bracketed-paste-mode-issue-at-command-prompt-in-zsh-shell
-#github.com/tokiclover/dotfiles/blob/master/.zsh/lib/bracketed-paste.zsh
-unset zle_bracketed_paste
-#. ~/.config/zsh/bracketed-paste.zsh
+    alias ...='. $HOME/.zshrc'
+    #http://mindonmind.github.io/notes/linux/zsh_bindkeys.html
+    #使用bindkey命令，第一个参数为对应快捷键的 CSI 序列 ，
+    #想知道某种快捷组合键的 CSI 序列，有如下两种方法:
+    #1.先按 Ctrl-V 然后再按组合键，如 Ctrl-A
+    #2.输入 cat > /dev/null ，之后输入组合键
+    # 更改 Ctrl+u 从光标删除到行首,而不是删除一整行
+    bindkey "^U" backward-kill-line
+    # Ctrl+End 向后删除一个单词
+    bindkey "^[[1;5F" kill-word
+    # Ctrl+Home 向前删除一个单词
+    bindkey "^[[1;5H" backward-kill-word
+    # 映射 Ctrl+↑ 为返回到行首,相当于 Home
+    bindkey "^[[1;5A" beginning-of-line
+    # 映射 Ctrl+↓ 为返回到行首,相当于 End
+    bindkey "^[[1;5B" end-of-line
+    # 使zsh前向词行为与bash/emacs中的行为相同
+    bindkey "^[[1;5C" emacs-forward-word
+    # 关闭括号粘贴模式 bing搜索zsh bracketed-paste-begin
+    # https://stackoverflow.com/questions/33452870/tmux-bracketed-paste-mode-issue-at-command-prompt-in-zsh-shell
+    #github.com/tokiclover/dotfiles/blob/master/.zsh/lib/bracketed-paste.zsh
+    unset zle_bracketed_paste
+    #. ~/.config/zsh/bracketed-paste.zsh
 
-# 将zsh的type命令仿真为bash的type命令
-alias type="bash ${0:h}/type"
-# 让zsh像bash一样提示未安装的软件
-[ -r /etc/zsh_command_not_found ] && . /etc/zsh_command_not_found
+    # 将zsh的type命令仿真为bash的type命令
+    # shellcheck disable=SC2139
+    alias type="bash ${0:h}/type"
+    # 让zsh像bash一样提示未安装的软件
+    # shellcheck source=/dev/null
+    [ -r /etc/zsh_command_not_found ] && . /etc/zsh_command_not_found
 fi
 #set -o vi
 alias 。。。=...

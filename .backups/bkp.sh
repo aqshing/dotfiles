@@ -1,3 +1,40 @@
+#!/usr/bin/env bash
+############################################################
+# Filename: bkp.sh
+# Author: aqshing
+# Email: jdbc.cc <work@jdbc.cc>
+# Brief: deprecated conf 已弃用的配置, 仅作备份
+# Created: 2023-10-11 19:19:58
+# Changed: 2023-10-11 19:25:09
+############################################################
+# set -Exeo pipefail
+
+# --- work.sh
+# install greatdb
+function indb() {
+    cd /opt/greatdb-ansible-master || return 1
+    ansible-playbook deploy.yml -i inventory/deploy.ini -v
+}
+# upgrade greatdb
+#alias update='ansible-playbook upgrade.yml -i inventory/upgrade.ini -v'
+#alias upgrade='ansible-playbook upgrade.yml -i inventory/upgrade.ini -v'
+function updb() {
+    cd /opt/greatdb-ansible-master || return 1
+    ansible-playbook upgrade.yml -i inventory/deploy.ini -v
+}
+# clean greatdb
+#alias clean='ansible-playbook cleanup.yml -i inventory/deploy.ini -v'
+function cldb() {
+    cd /opt/greatdb-ansible-master || return 1
+    ansible-playbook cleanup.yml -i inventory/deploy.ini -v
+}
+##alias el='vi /greatdb/log'
+##if [ -z "$TMUX" ]; then
+##    tmux attach -t default || tmux new -s default
+##fi
+# ---
+
+# --- zconf.zsh的备份保留
 # 默认跟随系统，一般不需要设置
 ##export LANGUAGE=en_US #: zh_CN
 
@@ -59,11 +96,28 @@ zinit ice lucid wait='1'
 zinit ice depth=1
 zinit light romkatv/powerlevel10k
 
+# ---- (可选)加载了一堆二进制程序 ----
+#zinit light z-shell/z-a-bin-gem-node
+
+#zinit as="null" wait="1" lucid from="gh-r" for
+#    mv="exa* -> exa" sbin        ogham/exa
+#    mv="*/rg -> rg"  sbin        BurntSushi/ripgrep
+#    mv="fd* -> fd"   sbin="fd/fd"  @sharkdp/fd
+#    sbin="fzf"       junegunn/fzf-bin
+
 # 加载它们的补全等
 zinit ice mv="*.zsh -> _fzf" as="completion"
 zinit snippet 'https://github.com/junegunn/fzf/blob/master/shell/completion.zsh'
 zinit snippet 'https://github.com/junegunn/fzf/blob/master/shell/key-bindings.zsh'
 #zinit ice as="completion"
+#zinit snippet 'https://github.com/robbyrussell/oh-my-zsh/blob/master/plugins/fd/_fd'
+#   以下内容不推荐使用
+#   zinit ice svn mv="*.zsh -> _exa" as="completion"
+#   zinit snippet 'https://github.com/ogham/exa'
+#
+#   # 不需要花里胡哨的 ls，我们有更花里胡哨的 exa
+#   DISABLE_LS_COLORS=true
+#   alias ls=exa
 # 配置 fzf 使用 fd
 export FZF_DEFAULT_COMMAND='fd --type f'
 # 初始化补全
@@ -71,3 +125,5 @@ autoload -Uz compinit
 compinit
 # zinit 出于效率考虑会截获 compdef 调用，放到最后再统一应用，可以节省不少时间
 zinit cdreplay -q
+# ---- 加载完了 ----
+# ---

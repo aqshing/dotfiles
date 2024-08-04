@@ -31,7 +31,7 @@ alias cpu="grep -c '^processor' /proc/cpuinfo"
 #sudo提权后使用别名https://mp.weixin.qq.com/s/LEWlF5reOTZQWFRx43lAIg
 alias sudo='sudo '
 # 清除所有ssh-agent缓存的pem
-alias sshcl='ssh-add -D'
+# alias sshcl='ssh-add -D'
 # 模糊搜索进程
 function pg() {
     for i in "$@"; do # shellcheck disable=SC2009
@@ -48,7 +48,8 @@ alias hg='history | grep'
 ##}
 ##匹配本机所有网卡 ifconfig | grep -oE "^\S*:"| grep -v 'lo' | sed -n 's/://gp'
 ## 匹配本机真实ip
-#ifconfig|grep "^e\S*:" -A 2|grep inet|sed -ne 's/^\s*//' -e 's@inet @@g' -e 's#\s*netm.*##gp'
+#ip addr|grep ": e\S*:" -A2|grep -oE "inet ([0-9]+.){3}[0-9]+"|sed -n 's#inet ##p'
+#ifconfig|grep "^e\S*:" -A2|grep inet|sed -ne 's/^\s*//' -e 's@inet @@g' -e 's#\s*netm.*##gp'
 alias ig="ifconfig | grep inet | sed -n -e 's/^\s*//' -e '/inet 127/d' -e 's@inet@ipv4@g' -e 's#\s*netm.*##gp'"
 alias ig6="ifconfig | grep inet | sed -n -e 's/^\s*//' -e '/inet 127/d' -e 's/inet6/ipv6/g' -e 's@inet@ipv4@g' -e 's#\s*netm.*##gp' -e 's#\s*pref.*##gp'"
 alias bk='bash ~/.config/zsh/bk'
@@ -69,8 +70,12 @@ alias nq='nginx -s quit'
 # docker
 alias dr='docker run'
 alias dp='docker ps'
-function de() {
-    docker exec -it "$1" /bin/bash
+function de() { # 检查容器中是否存在 /bin/bash
+    if docker exec -it "$1" [ -e /bin/bash ]; then
+        docker exec -it "$1" /bin/bash
+    else
+        docker exec -it "$1" /bin/sh
+    fi
 }
 alias ds='docker search --limit=5'
 alias di='docker images'
@@ -80,13 +85,6 @@ alias drmi='docker rmi'
 alias ta='tmux attach -t'
 alias tls='tmux ls'
 alias tk='tmux kill-session -t'
-# vpn
-# curl -s https://api.ipify.org
-alias myip='curl cip.cc'
-alias vip='proxychains4 curl ipinfo.io'
-# 测试vpn是否连接成功
-alias vpnt='curl -x socks5://127.0.0.1:10808 https://www.google.com -v'
-alias v='proxychains4'
 # 将npm替换为cnpm
 if command -v cnpm >/dev/null 2>&1; then
     alias npm='cnpm'
@@ -97,11 +95,59 @@ if command -v nvim >/dev/null 2>&1; then
 elif command -v vim >/dev/null 2>&1; then
     alias vi='vim'
 fi
+# vpn # curl -s https://api.ipify.org
+alias myip='curl cip.cc'
+alias vip='proxychains4 curl ipinfo.io'
+# 测试vpn是否连接成功
+[ -z "$proxy_ip" ] && export proxy_ip="127.0.0.1"
+alias vpnt='curl -x socks5://$proxy_ip:10808 https://www.google.com -v'
+alias v='proxychains4'
 # Global Terminal VPN
 function gvpn() {
-    #全局终端代理
-    export ALL_PROXY="socks5://127.0.0.1:10808"
-    export http_proxy="http://127.0.0.1:10809"
+    if [[ "$1" == "off" || "$1" == "0" ]]; then
+        # unset ALL_PROXY proxy http_proxy https_proxy ftp_proxy no_proxy
+        export ALL_PROXY=""
+        export proxy=""
+        export http_proxy=""
+        export https_proxy=""
+        export ftp_proxy=""
+        export use_proxy=off
+    else # 全局终端代理
+        [ -z "$proxy_ip" ] && export proxy_ip="127.0.0.1"
+        export ALL_PROXY="socks5://$proxy_ip:10808"
+        export proxy=$ALL_PROXY
+        export http_proxy="http://$proxy_ip:10809"
+        export https_proxy=$http_proxy
+        export ftp_proxy=$http_proxy
+        export no_proxy="localhost,127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+        export use_proxy=on
+    fi
+}
+# 获取 curl 和 wget 的可执行文件路径
+[ -z "$CURL_BIN" ] && CURL_BIN=$(command -v curl)
+[ -z "$WGET_BIN" ] && WGET_BIN=$(command -v wget)
+# 定义 alias 并调用自定义函数
+alias curl='auto_proxy_curlwget "$CURL_BIN"'
+alias wget='auto_proxy_curlwget "$WGET_BIN"'
+# 自定义函数：自动判断是否需要打开 VPN，并下载文件
+function auto_proxy_curlwget() {
+    local dl_bin="$1" # 下载工具的路径
+    shift             # 移除第一个参数，剩余的参数是传递给下载工具的参数列表
+    local tmp_proxy=$use_proxy
+
+    # 判断是否需要打开 VPN
+    if python3.9 "$HOME"/.config/zsh/isproxy.py "$@"; then
+        gvpn 1 # 打开 VPN
+    fi
+
+    # 使用下载工具下载文件
+    "$dl_bin" "$@"
+    local ErrCode=$?
+    # 如果之前 VPN 状态不是 "on"，则关闭 VPN 并恢复环境
+    if [[ "$tmp_proxy" != "$use_proxy" ]] && [[ "$tmp_proxy" != "on" ]]; then
+        gvpn 0 # 关闭 VPN
+    fi
+    return $ErrCode
 }
 # 用CURL命令分析请求时间
 # https://schaepher.github.io/2019/08/29/curl-analyze/
@@ -128,10 +174,13 @@ function pk() { # shellcheck disable=SC2009
 function qrcode() {
     echo "$1" | curl -F-=\<- qrenco.de
 }
+function glibc() {
+    [ -e "$1" ] && ldd "$1" && readelf -s "$1" | grep -oP "GLIBC_[\d\.]*" | sort | uniq
+}
 # 删除文件到回收站
 function rr() {
     if [ ! -e "$HOME/.Trash/.count" ]; then
-        mkdir "$HOME/.Trash"
+        mkdir -p "$HOME/.Trash"
         echo 0 >"$HOME/.Trash/.count"
     fi
 
@@ -144,11 +193,53 @@ function rr() {
     echo $t >"$HOME/.Trash/.count"
 
     if [ "$t" -gt 10 ]; then
-        rm -rf "$HOME/.Trash"
-        mkdir "$HOME/.Trash"
         echo 1 >"$HOME/.Trash/.count"
-    fi
+        local file trimmed_string date_part timestr answer
+        for file in "$HOME/.Trash"/*; do
+            # 去掉最后6位时间字符串 %H%M%S
+            trimmed_string="${file%??????}"
+            # 截取最后8位日期字符串 %Y%m%d
+            date_part="${trimmed_string: -8}"
 
+            # 判断是否是合法的 %Y%m%d 日期字符串
+            if date -d "$date_part" +%Y%m%d >/dev/null 2>&1; then
+                timestr="+%Y%m%d"
+            else
+                # 如果不是，去掉前两位再判断是否是合法的 %y%m%d 日期字符串
+                date_part="${date_part#??}"
+                if date -d "$date_part" +%y%m%d >/dev/null 2>&1; then
+                    timestr="+%y%m%d"
+                else
+                    while true; do
+                        read -rt 60 -n 1 -p"$file: No timestamp was found. Continue delete? [y|n]" answer >&2
+                        if [[ -z "$answer" ]]; then
+                            answer=n
+                        fi
+                        case $answer in
+                        [Yy])
+                            echo -e "\033[33m\ndelete $file\033[0m" >&2
+                            rm -rf "$file"
+                            break
+                            ;;
+                        [Nn])
+                            echo -e "\033[32mAbort delete the file...\033[0m" >&2
+                            break
+                            ;;
+                        *)
+                            echo -e "\033[31mInvalid input, please enter y|n:\033[0m" >&2
+                            ;;
+                        esac
+                    done
+                    continue
+                fi
+            fi
+            # 判断该文件是否超过10天, 超过则删除
+            if ((10#"$date_part" <= 10#$(date -d "- 10 days" "$timestr"))); then
+                echo -e "\033[33mdelete $file\033[0m"
+                rm -rf "$file"
+            fi
+        done
+    fi
     ## $(date +%Y-%m-%d_%H:%M:%S)
     nowtime=$(date +%y%m%d%H%M%S)
     for i in "$@"; do
@@ -176,9 +267,9 @@ function qcompress() {
     fi
 }
 
-# 针对bash专门定制的别名、函数和配置
-if grep -iqE "bash$" <<<"$0"; then
-    alias ...='. $HOME/.bashrc'
+if grep -iqE "bash$" <<<"$0"; then # 针对bash专门定制的别名、函数和配置
+    alias ....='. $HOME/.bashrc'
+    alias ...='vi $HOME/.bashrc && . $HOME/.bashrc'
     # 自动解压：判断文件后缀名并调用相应解压命令
     alias x='q-extract'
     function q-extract() {
@@ -225,8 +316,9 @@ if grep -iqE "bash$" <<<"$0"; then
         bind '"\e[1;5A":beginning-of-line'
         bind '"\e[1;5B":end-of-line'
     fi
-else
-    alias ...='. $HOME/.zshrc'
+else # 针对zsh专门定制的别名、函数和配置
+    alias ....='. $HOME/.zshrc'
+    alias ...='vi $HOME/.zshrc && . $HOME/.zshrc'
     #http://mindonmind.github.io/notes/linux/zsh_bindkeys.html
     #使用bindkey命令，第一个参数为对应快捷键的 CSI 序列 ，
     #想知道某种快捷组合键的 CSI 序列，有如下两种方法:
@@ -259,3 +351,4 @@ else
 fi
 #set -o vi
 alias 。。。=...
+# sort -t ";" -k 2 -u ~/.zsh_history | sort -o ~/.zsh_history # 去重zsh历史记录

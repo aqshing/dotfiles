@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
-###################################################
+############################################################
 # Filename: zinit.sh
 # Author: aqshing
-# Email: aqdebug.com aqdebug@gmail.com
-# Brief: init shell
+# Email: jdbc.cc <work@jdbc.cc>
+# Brief:
 # Created: 2020-11-05 20:53:24
-# Changed: 2022-09-13 10:54:54
-###################################################
-# set -xeuo pipefail
+# Changed: 2024-08-04 13:15:04
+############################################################
+# set -Exeo pipefail
+shopt -s nullglob # if '*' not match, return a null string
+
 # 架构 x86 x86_64 arm aarch64
 HOST_ARCH=$(uname -m | sed -e 's/i.86/i686/' -e 's/^armv.*/arm/')
 # 内核：Linux
-OS_KERNEL=$(uname | tr "[:lower:]" "[:upper:]" )
+OS_KERNEL=$(uname | tr "[:lower:]" "[:upper:]")
 # OS分支：Ubuntu CentOS
 DISTRO=$(cat /etc/os-release | grep '^ID=' | cut -d '=' -f 2 | tr "[:lower:]" "[:upper:]" | tr -d '"')
 # 当前用户ID
@@ -19,38 +21,30 @@ USER_ID=$(id -u)
 # 当前用户名字
 USER_NAME=$(whoami)
 
-
-#START_DIR=$(dirname "$0")
-#START_DIR=$(cd "$START_DIR" || exit; pwd)
-START_DIR=$(cd "$(dirname "$0")" || exit; pwd)
+# START_DIR=$(cd "$(dirname "$0")" || exit; pwd)
+START_DIR=$(cd "$(dirname "$0")" && pwd || exit)
 
 ConfFile='~/.bashrc'
 SourceLine=0
 
-
-function Transhor()
-{
+function Transhor() {
 	if [ ! -d "$HOME/.backups" ]; then
-	    mkdir "$HOME/.backups"
+		mkdir "$HOME/.backups"
 	fi
 
 	nowtime=$(date +%Y-%m-%d_%H:%M:%S)
-	for i in "$@";
-	do
+	for i in "$@"; do
 		filename=$(basename "$i")
 		mv "$i" "$HOME/.backups/$filename.$nowtime"
 	done
 }
 
-
-function CpConf()
-{
+function CpConf() {
 	if [ ! -d "$HOME/.config" ]; then
 		mkdir "$HOME/.config"
 	fi
 
-	for folder in $(ls shell/config)
-	do
+	for folder in $(ls shell/config); do
 		if [ -n "$folder" ] && [ -e "$HOME/.config/$folder" ]; then
 			Transhor "$HOME/.config/$folder"
 		fi
@@ -65,9 +59,7 @@ function CpConf()
 	fi
 }
 
-
-function GitandSSH()
-{
+function GitandSSH() {
 	git config --global user.name "aqshing"
 	git config --global user.email aqdebug@gmail.com
 	git config --global core.editor vim
@@ -96,21 +88,19 @@ function GitandSSH()
 # 会在~/.bashrc中检测JAVA_HOME变量，若检测到，则修正导出路径
 # 若没有则追加 export JAVA_HOME=/opt/java
 # export PATH=$PATH:$JAVA_HOME/bin 这两行内容到文件末尾
-function LoadFile()
-{
+function LoadFile() {
 	# 获取$1变量在.[ba|z]shrc出现的位置
 	local line=$(grep "$1" "$2" | wc -l)
 
 	if [ "$line" -lt 1 ]; then #没有导出过则导出此变量
-		SourceLine=$((SourceLine+1))
-		sed -i  "$SourceLine a $1" "$2"
+		SourceLine=$((SourceLine + 1))
+		sed -i "$SourceLine a $1" "$2"
 	fi
 
 	return 0
 }
 
-function Load()
-{
+function Load() {
 	local file="$HOME/.bashrc"
 	# 检测是否存在zsh
 	if [ -e "$HOME/.zshrc" ]; then
@@ -132,9 +122,8 @@ function Load()
 	LoadFile 'source ~/.config/zsh/work.sh' "$file"
 }
 
-function OpenGlobalVPN()
-{
-	if curl -x socks5://127.0.0.1:10808 https://www.google.com --silent > /dev/null; then
+function OpenGlobalVPN() {
+	if curl -x socks5://127.0.0.1:10808 https://www.google.com --silent >/dev/null; then
 		echo "检测到代理，代理联网成功，开启全局代理..."
 		export ALL_PROXY="socks5://127.0.0.1:10808"
 		export http_proxy="http://127.0.0.1:10809"
@@ -145,9 +134,8 @@ function OpenGlobalVPN()
 	fi
 }
 
-function main()
-{
-	echo $START_DIR 
+function main() {
+	echo $START_DIR
 	return 0
 	cd "$START_DIR" || return 1
 	OpenGlobalVPN
@@ -156,5 +144,5 @@ function main()
 	Load
 }
 
-main  "$@"
-exit  "$?"
+main "$@"
+exit "$?"

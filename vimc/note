@@ -202,6 +202,38 @@
 ""set -E:一旦设置了-e参数，会导致函数内的错误不会被trap命令捕获。
 ""  -E参数可以纠正这个行为，使得函数也能继承trap命令。
 
+"" old code.vim: 194 ```deprecated
+""if executable('pyls')
+""    " pip install python-language-server
+""    au User lsp_setup call lsp#register_server({
+""        \ 'name': 'pyls',
+""        \ 'cmd': {server_info->['pyls']},
+""        \ 'allowlist': ['python'],
+""        \ })
+""endif
+""
+""function! s:on_lsp_buffer_enabled() abort
+""    setlocal omnifunc=lsp#complete
+""    setlocal signcolumn=yes
+""    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+""    nmap <buffer> gd <plug>(lsp-definition)
+""    nmap <buffer> gr <plug>(lsp-references)
+""    nmap <buffer> gi <plug>(lsp-implementation)
+""    nmap <buffer> gt <plug>(lsp-type-definition)
+""    nmap <buffer> <leader>rn <plug>(lsp-rename)
+""    nmap <buffer> [g <Plug>(lsp-previous-diagnostic)
+""    nmap <buffer> ]g <Plug>(lsp-next-diagnostic)
+""    nmap <buffer> K <plug>(lsp-hover)
+""
+""    " refer to doc to add more commands
+""endfunction
+""
+""augroup lsp_install
+""    au!
+""    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+""    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+""augroup END
+
 cmd1 | cmd2           # 管道，cmd1 的标准输出接到 cmd2 的标准输入
 < file                # 将文件内容重定向为命令的标准输入
 > file                # 将命令的标准输出重定向到文件，会覆盖文件

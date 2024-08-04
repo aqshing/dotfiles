@@ -1,9 +1,11 @@
 # shellcheck disable=SC2148
 # if windows, 将Windows的环境变量(%path%)读取到PATH变量中
 if [ ! -e "$HOME/._.bat" ]; then
-    f="${HOME/\//}"
-    f="${f/\//:/}/._.p"
-    echo "echo %path% > $f" >"$HOME"/._.bat
+    # old code 写死路径迁移时会有问题
+    # f="${HOME/\//}"
+    # f="${f/\//:/}/._.p"
+    # echo "echo %path% > $f" >"$HOME"/._.bat
+    echo "echo %path% > %USERPROFILE%" >"$HOME"/._.bat
 fi
 # 先通过cmd将%path%读取到._.p文件中, 再从文件读取到PATH中
 IFS=$'\n'

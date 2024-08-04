@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-###################################################
-# Filename: zinit.sh
+############################################################
+# Filename: init.sh
 # Author: aqshing
-# Email: aqdebug.com aqdebug@gmail.com
-# Brief: init shell
+# Email: jdbc.cc <work@jdbc.cc>
+# Brief:
 # Created: 2020-11-05 20:53:24
-# Changed: 2022-10-12 19:01:22
-###################################################
+# Changed: 2023-12-16 22:26:29
+############################################################
+# set -Exeo pipefail
+shopt -s nullglob # if '*' not match, return a null string
+
 # set -xeuo pipefail
 # 架构 x86 x86_64 arm aarch64
 HOST_ARCH=$(uname -m | sed -e 's/i.86/i686/' -e 's/^armv.*/arm/')
@@ -22,7 +25,10 @@ USER_NAME=$(whoami)
 BASH_VERSION=$(bash --version | grep -oE '[0-9]+\.[0-9]+' | sed -n 's/\.//gp')
 #ZSH_VERSION=$(zsh --version | grep -oE '[0-9]+\.[0-9]+' | sed -n 's/\.//gp')
 # 脚本所在目录
-START_DIR=$(cd "$(dirname "$0")" || exit; pwd)
+START_DIR=$(
+	cd "$(dirname "$0")" || exit
+	pwd
+)
 cd "$START_DIR" || return 1
 ConfFile="$HOME/.bashrc"
 SourceLine=0
@@ -33,13 +39,11 @@ printf "checking command: %s ... " "ln -s"
 "$ISLINK" && printf "yes\n" || printf "no\n"
 rm -f "$START_DIR/lntest.sh"
 
-
 function Transhor() {
 	if [ ! -d "$HOME/.backups" ]; then
-	    mkdir "$HOME/.backups"
+		mkdir "$HOME/.backups"
 	fi
-	for i in "$@";
-	do
+	for i in "$@"; do
 		filename=$(basename "$i")
 		mv "$i" "$HOME/.backups/$filename.$(date +%y%m%d%H%M%S)"
 	done
@@ -50,7 +54,7 @@ function LinkOrCopy() {
 	if [ -e "$2" ]; then
 		Transhor "$2"
 	fi
-	f=$(sed -ne "s#$HOME#~#gp" <<< "$2")
+	f=$(sed -ne "s#$HOME#~#gp" <<<"$2")
 	if ! "$ISLINK" || [ "$3" == "cp" ]; then
 		cp -a "$1" "$2"
 		printf "cp %s -> %s\n" "$(basename "$1")" "$f"
@@ -65,8 +69,7 @@ function CpConf() {
 		mkdir "$HOME/.config"
 	fi
 	f=$(ls shcnf)
-	for folder in $f
-	do
+	for folder in $f; do
 		if [ -n "$folder" ]; then
 			LinkOrCopy "$START_DIR/shcnf/$folder" "$HOME/.config/$folder"
 		fi
@@ -79,7 +82,6 @@ function CpConf() {
 	fi
 }
 
-
 function GitandSSH() {
 	git config --global user.name "aqshing"
 	git config --global user.email aqdebug@gmail.com
@@ -91,8 +93,7 @@ function GitandSSH() {
 		mkdir "$HOME/.ssh"
 	fi
 	f=$(ls softcnf)
-	for folder in $f
-	do
+	for folder in $f; do
 		if [ -n "$folder" ]; then
 			LinkOrCopy "$START_DIR/softcnf/$folder" "$HOME/.$folder"
 		fi
@@ -108,12 +109,9 @@ function GitandSSH() {
 # @eg: SetPATH JAVA_HOME /opt/java
 function LoadFile() {
 	# 获取$1变量在.[ba|z]shrc出现的位置
-	line=$(grep "$1" "$2" | wc -l)
-
-	if [ "$line" -lt 1 ]; then #没有导出过则导出此变量
-		SourceLine=$((SourceLine+1))
-		sed -i  "$SourceLine i $1" "$2"
-		sed -i "1i#! /bin/sh -" a
+	SourceLine=$((SourceLine + 1))
+	if ! grep -q "$1" "$2" ; then #没有导出过则导出此变量
+		sed -i "$SourceLine i $1" "$2"
 	fi
 }
 
@@ -129,18 +127,27 @@ function Load() {
 			file="$HOME/.zshrc"
 			ConfFile="$HOME/.zshrc"
 			#
+			zshline=$(wc -l <"$HOME/.zshrc")
+			if (("$zshline" == 0)); then
+				echo "# this is .zshrc start pos" >>"$HOME/.zshrc"
+			fi
+
 			LoadFile '. ~/.zinit/bin/zinit.zsh' "$file"
 			LoadFile '. ~/.config/zsh/zconf.zsh' "$file"
 		fi
 	fi
 
 	LoadFile '. ~/.config/zsh/alias.sh' "$file"
+	LoadFile '. ~/.config/zsh/export.sh' "$file"
 	LoadFile '. ~/.config/zsh/git.sh' "$file"
 	LoadFile '. ~/.config/zsh/work.sh' "$file"
+	if (("$zshline" == 0)); then
+		sed -i '/^# this is .zshrc start pos/d' "$file"
+	fi
 }
 
 function OpenGlobalVPN() {
-	if curl -x socks5://127.0.0.1:10808 https://www.google.com --silent > /dev/null; then
+	if curl -x socks5://127.0.0.1:10808 https://www.google.com --silent >/dev/null; then
 		echo "检测到代理，代理联网成功，开启全局代理..."
 		export ALL_PROXY="socks5://127.0.0.1:10808"
 		export http_proxy="http://127.0.0.1:10809"
@@ -157,16 +164,16 @@ function main() {
 	CpConf
 	Load
 
-	if [[ "$OS_KERNEL" =~ "NT" ]] && grep -iqE "windows" <<< "$OS" &&
-	! grep -iqE "._.bat" "$HOME/.config/zsh/export.sh"; then
-		cat "$START_DIR/shcnf/zsh/winpath" >> "$HOME/.config/zsh/export.sh"
+	if [[ "$OS_KERNEL" =~ "NT" ]] && grep -iqE "windows" <<<"$OS" &&
+		! grep -iqE "._.bat" "$HOME/.config/zsh/export.sh"; then
+		cat "$START_DIR/shcnf/zsh/winpath" >>"$HOME/.config/zsh/export.sh"
 	fi
 
 	# 清理环境变量
-	if tail -1 ~/.bashrc | grep -c "export PATH=\$(echo \"\$PATH\" | sed 's/:/\\\n/g' | sort | uniq | tr -s '\\\n' ':' | sed 's/:$//g')"; then
-		printf "export PATH=\$(echo \"\$PATH\" | sed 's/:/\\\n/g' | sort | uniq | tr -s '\\\n' ':' | sed 's/:$//g')" >> "$ConfFile"
+	if ! tail -2 "$ConfFile" | grep -q "export PATH=\$(echo \"\$PATH\" | sed 's/:/\\\n/g' | sort | uniq | tr -s '\\\n' ':' | sed 's/:$//g')"; then
+		printf "export PATH=\$(echo \"\$PATH\" | sed 's/:/\\\n/g' | sort | uniq | tr -s '\\\n' ':' | sed 's/:$//g')\n" >>"$ConfFile"
 	fi
 }
 
-main  "$@"
-exit  "$?"
+main "$@"
+exit "$?"

@@ -1,12 +1,29 @@
-snippet filehead "file head of sh"
+snippet filehead "file head of py"
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 ###################################################
 # Filename: `!v expand("%:t")`
 # Author: aqshing
-# Email: aqdebug.com aqdebug@gmail.com
+# Email: <work@jdbc.cc> Web: jdbc.cc
 # Brief: ${1:brief of script}
 # Created: `!v strftime("%Y-%m-%d %H:%M:%S")`
 # Changed: `!v strftime("%Y-%m-%d %H:%M:%S")`
 ###################################################
+endsnippet
+
+snippet main "main func of py"
+import sys
+
+def main(args: list[str]):
+    if not bool(args):
+        print("usage: python3 {0} [...]".format(sys.argv[0]))
+        return
+
+    ${1:code}
+
+    return 0
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
+    sys.exit()
 endsnippet

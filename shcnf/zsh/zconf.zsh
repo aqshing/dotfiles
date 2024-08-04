@@ -1,5 +1,7 @@
 # 默认跟随系统，一般不需要设置
-##export LANGUAGE=en_US #: zh_CN
+export LANGUAGE=en_US     #: zh_CN
+export LC_ALL=en_US.UTF-8 #: zh_CN.UTF-8
+export LANG=en_US.UTF-8   # 让zsh支持中文
 
 # 快速目录跳转
 zinit ice lucid wait='1'
@@ -17,6 +19,10 @@ zinit light mdumitru/last-working-dir
 # 自动建议
 zinit ice lucid wait="0" atload='_zsh_autosuggest_start'
 zinit light zsh-users/zsh-autosuggestions
+# 启用自动切换目录特性(只需输入目录名, 不需显式输入cd命令, zsh会自动切换到该目录)
+setopt AUTO_CD # unsetopt AUTO_CD # 查看是否启用该选项: setopt | grep -i autocd
+# 设置zsh忽略以 # 开头的注释
+setopt interactive_comments
 
 # 补全
 zinit ice blockf as"completion"
@@ -54,10 +60,11 @@ zinit ice lucid wait='1'
 #   zinit snippet OMZT:robbyrussell
 #   zinit snippet OMZT:gnzh
 # 加载 pure 主题
-#zinit ice pick"async.zsh" src"pure.zsh"; zinit light sindresorhus/pure
+zinit ice pick"async.zsh" src"pure.zsh"
+zinit light sindresorhus/pure
 # Load p10k themes
-zinit ice depth=1
-zinit light romkatv/powerlevel10k
+#zinit ice depth=1
+#zinit light romkatv/powerlevel10k
 
 # 加载它们的补全等
 zinit ice mv="*.zsh -> _fzf" as="completion"
@@ -67,7 +74,6 @@ zinit snippet 'https://github.com/junegunn/fzf/blob/master/shell/key-bindings.zs
 # 配置 fzf 使用 fd
 export FZF_DEFAULT_COMMAND='fd --type f'
 # 初始化补全
-autoload -Uz compinit
-compinit
+autoload -Uz compinit && compinit
 # zinit 出于效率考虑会截获 compdef 调用，放到最后再统一应用，可以节省不少时间
 zinit cdreplay -q

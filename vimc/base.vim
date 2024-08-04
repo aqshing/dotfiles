@@ -25,6 +25,7 @@ set shiftwidth=4
 set backspace=2
 "统一缩进为4
 set softtabstop=4
+
 ""vim<740会出现粘贴<Tab>出错的情况
 if version > 800 || has('nvim')
 "自动缩进cindent:使用C标准风格缩进
@@ -34,6 +35,7 @@ set smartindent
 "自动对齐
 set autoindent
 endif
+
 "不要用空格代替制表符
 set noexpandtab
 "语法高亮
@@ -83,8 +85,8 @@ setlocal spelllang=en_us
 "set spell
 "高亮光标所在当前列
 "set cursorcolumn
-"use mouse
-"set mouse=a
+"use mouse:set mouse=a
+set mouse=
 " 细节调整，主要为了适应 Google C++ Style
 " t0: 函数返回类型声明不缩进
 " g0: C++ "public:" 等声明缩进一个字符
@@ -93,14 +95,14 @@ setlocal spelllang=en_us
 " j1: 合理的缩进 Java 或 C++ 的匿名函数，应该也适用于 JS
 set cinoptions=t0,g0,h4,N-s,j1
 "设置备份文件存放目录
-silent !mkdir -p ~/.config/nvim/tmp/backup
-silent !mkdir -p ~/.config/nvim/tmp/undo
-"silent !mkdir -p ~/.config/nvim/tmp/sessions
-set backupdir=~/.config/nvim/tmp/backup,.
-set directory=~/.config/nvim/tmp/backup,.
+silent !mkdir -p "$HOME"/.local/share/nvim/tmp/backup
+silent !mkdir -p "$HOME"/.local/share/nvim/tmp/undo
+"silent !mkdir -p "$HOME"/.local/share/nvim/tmp/sessions
+set backupdir=$HOME/.local/share/nvim/tmp/backup,.
+set directory=$HOME/.local/share/nvim/tmp/backup,.
 if has('persistent_undo')
 	set undofile
-	set undodir=~/.config/nvim/tmp/undo,.
+	set undodir=$HOME/.local/share/nvim/tmp/undo,.
 endif
 "EOL针对不同平台设置不同的行尾符(*nix为\n,win为\r\n)
 "mac平台自OS X始，换行符与unix一致;越靠前优先级越高

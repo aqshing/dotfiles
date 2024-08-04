@@ -22,6 +22,8 @@ for shname in "$START_DIR"/*.sh; do
 done
 
 # 恢复原bash的type命令
-unalias type
-type "$@"
+unalias type >|/dev/null 2>&1
+if ! type "$@" 2>"/tmp/$PRIFIX/.err"; then
+    sed -ne"s#^.*type: line [0-9]*: ##p" "/tmp/$PRIFIX/.err" && rm -f .err
+fi
 exit "$?"

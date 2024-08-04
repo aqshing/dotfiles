@@ -1,13 +1,16 @@
 " 设置注释快捷键(注释必须成双结对)
 map <silent> <SPACE><SPACE> :call MyComments()<CR>
 func! MyComments()
-    if &filetype == 'c' || &filetype == 'cpp' || &filetype == 'java' || &filetype == 'json'
+    if &filetype == 'c' || &filetype == 'cpp' ||
+\      &filetype == 'go' || &filetype == 'java' || &filetype == 'json'
         normal 0i//
     elseif &filetype == 'vim'
         normal 0i""
-    elseif &filetype == 'shell' || &filetype == 'sh' ||
-\          &filetype == 'python' || &filetype == 'py'||
-\          &filetype == 'conf'
+    elseif &filetype == 'py' || &filetype == 'sh' ||
+\          &filetype == 'cnf' || &filetype == 'yml' ||
+\          &filetype == 'conf' || &filetype == 'yaml' ||
+\          &filetype == 'python' || &filetype == 'shell' ||
+\          &filetype == 'zsh' || &filetype == 'test'
         normal 0i##
     elseif &filetype == 'lua'
         normal 0i--
@@ -24,13 +27,16 @@ endfunc
 map <silent> \\ :call UnComments()<CR>
 ""map <silent> \\ 0df j
 func! UnComments()
-    if &filetype == 'c' || &filetype == 'cpp' || &filetype == 'java' || &filetype == 'json'
+    if &filetype == 'c' || &filetype == 'cpp' ||
+\      &filetype == 'go' || &filetype == 'java' || &filetype == 'json'
         normal 0df/j
     elseif &filetype == 'vim'
         normal 0df"j
-    elseif &filetype == 'shell'|| &filetype == 'sh' ||
-\          &filetype == 'python'|| &filetype == 'py'||
-\          &filetype == 'conf'
+    elseif &filetype == 'py' || &filetype == 'sh' ||
+\          &filetype == 'cnf' || &filetype == 'yml' ||
+\          &filetype == 'conf' || &filetype == 'yaml' ||
+\          &filetype == 'python' || &filetype == 'shell' ||
+\          &filetype == 'zsh' || &filetype == 'test'
         normal 0df#j
     elseif &filetype == 'lua'
         normal 0df-j

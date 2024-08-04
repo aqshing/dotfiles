@@ -3,10 +3,50 @@ snippet filehead "file head of sh"
 ###################################################
 # Filename: `!v expand("%:t")`
 # Author: aqshing
-# Email: aqdebug.com aqdebug@gmail.com
+# Email: <work@jdbc.cc> Web: jdbc.cc
 # Brief: ${1:brief of script}
 # Created: `!v strftime("%Y-%m-%d %H:%M:%S")`
 # Changed: `!v strftime("%Y-%m-%d %H:%M:%S")`
 ###################################################
-# set -Exeuo pipefail
+# set -Exeo pipefail # if '*' not match, return a null string
+command -v shopt >/dev/null 2>&1 && shopt -s nullglob
+endsnippet
+
+snippet main "main func of sh"
+function main() {
+    ${1:code}
+
+    return  "$?"
+}
+
+# 这个if代码片段永远不会执行, 未调用的函数请放在这里, 以避免shellcheck告警
+if false; then  # This if snippet will never be executed
+    echo "please put uncalled functions here to disable shellcheck's warning"
+fi
+main  "$@"
+exit  "$?"
+endsnippet
+
+snippet clog "logs func of sh"
+#######color code########
+BLUE="34m"
+GREEN="32m"
+RED="31m"    # Error message
+YELLOW="33m" # Warning message
+function Echo() {
+    echo -e "\033[${1}${*:2}\033[0m"
+}
+
+function Debug() {
+    Echo $BLUE "[$(date '+%Y-%m-%d %H:%M:%S')]" "[debug]: " "$@"
+}
+function Info() {
+    Echo $GREEN "[$(date '+%Y-%m-%d %H:%M:%S')]" "[info]: " "$@"
+}
+function Warn() {
+    Echo $YELLOW "[$(date '+%Y-%m-%d %H:%M:%S')]" "[warning]: " "$@"
+}
+function Error() {
+    Echo $RED "[$(date '+%Y-%m-%d %H:%M:%S')]" "[error]: " "$@" 1>&2
+}
 endsnippet

@@ -21,11 +21,19 @@ if [ -e "$HOME/.ssh" ] && grep -irq _rsa "$HOME/.ssh"; then
         echo $?
     )
 
+    if grep -iqE "zsh$" <<<"$ZSH_NAME" && ! setopt | grep -q nullglob; then
+        setopt nullglob && usenullglob=true
+    fi
+
     if [ ! "$SSH_AUTH_SOCK" ] || [ "$agent_run_state" = 2 ]; then
         agent_start
         ssh-add "$HOME"/.ssh/*_rsa >/dev/null 2>&1
     elif [ "$SSH_AUTH_SOCK" ] && [ "$agent_run_state" = 1 ]; then
         ssh-add "$HOME"/.ssh/*_rsa >/dev/null 2>&1
+    fi
+
+    if $usenullglob; then
+        unsetopt nullglob && unset usenullglob
     fi
 
     unset ssh_env
